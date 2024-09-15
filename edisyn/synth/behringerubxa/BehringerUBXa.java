@@ -163,14 +163,14 @@ public class BehringerUBXa extends Synth {
             String label = (String) dials[i];
             if (label.equals(key)) {
                 param = (int) dials[i + 1];
-                break;
+                int val = getModel().get(key);
+                return buildNRPN(getChannelOut(),
+                        param, val);
             }
         }
 
-
-        int val = getModel().get(key);
-        return buildNRPN(getChannelOut(),
-                param, val);
+        assert false;
+        return null;
     }
 
     @Override
