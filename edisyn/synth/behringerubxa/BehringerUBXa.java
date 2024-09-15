@@ -1,11 +1,13 @@
 package edisyn.synth.behringerubxa;
 
+import edisyn.Midi;
+import edisyn.Synth;
 import edisyn.gui.*;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class BehringerUBXa extends edisyn.Synth {
+public class BehringerUBXa extends Synth {
 
     private static final int NUM_PARAMS = 5;
 
@@ -39,6 +41,41 @@ public class BehringerUBXa extends edisyn.Synth {
             "EnvelopesFilterR", 387, 0, 16383, false,
             "EnvelopesLoudnessA", 388, 0, 16383, false,
             "EnvelopesLoudnessD", 389, 0, 16383, false,
+            "EnvelopesLoudnessS", 390, 0, 16383, false,
+            "EnvelopesLoudnessR", 391, 0, 16383, false,
+            "EnvelopesModChannel1A", 392, 0, 16383, false,
+            "EnvelopesModChannel1Delay", 393, 0, 16383, false,
+            "EnvelopesModChannel2A", 394, 0, 16383, false,
+            "EnvelopesModChannel2Delay", 395, 0, 16383, false,
+            "EnvelopesPedalR", 396, 0, 16383, false,
+            "OscillatorsOSC1PWAmount", 512, 0, 16383, false,
+            "OscillatorsOSC1Transpose", 513, 0, 16383, true,
+            "OscillatorsOSC2PWAmount", 514, 0, 16383, false,
+            "OscillatorsOSC2Transpose", 515, 0, 16383, true,
+            "OscillatorsOSC1PWTrimL", 521, 0, 255, false,
+            "OscillatorsOSC1PWTrimR", 522, 127, 255, false,
+            "OscillatorsOSC2PWTrimL", 523, 0, 255, false,
+            "OscillatorsOSC2PWTrimR", 524, 127, 255, false,
+            "OscillatorsModDepth", 525, 6, 63, false,
+            "OscillatorsPWMDepth", 526, 0, 255, false,
+            "OscillatorsPWMOffsetShift", 527, 0, 255, false,
+            "OscillatorsChaos", 528, 0, 63, false,
+            "OscillatorsVPOError", 529, 0, 31, false,
+            "OscillatorsDriftSpeed", 530, 0, 63, false,
+            "OscillatorsVPOErrorChaos", 531, 0, 63, false,
+            "OscillatorsOscAutoInitF", 532, 0, 127, false,
+            "OscillatorsFEnvRange", 533, 1, 63, false,
+            "OscillatorsModDepth2", 534, 6, 63, false,
+            "FilterFrequency", 640, 0, 16383, false,
+            "FilterResonance", 641, 0, 16383, false,
+            "FilterModulation", 642, 0, 16383, false,
+            "FilterNoise", 643, 0, 16383, false,
+            "FilterResonanceTrim", 645, 0, 255, false,
+            "FilterResonanceTrim4Pole", 646, 0, 255, false,
+            "FilterFrequencyRange", 647, 0, 127, false,
+            "FilterZero2pOffset", 648, 0, 48, false,
+            "FilterZero4pOffset", 649, 0, 48, false,
+            "FilterModulationRange", 650, 0, 127, false,
 
     };
 
@@ -86,33 +123,40 @@ public class BehringerUBXa extends edisyn.Synth {
 
         JComponent soundPanel = new SynthPanel(this);
         addTab("Controls", soundPanel);
-        JComponent container = new HBox();
+        JComponent vb = new VBox();
+        soundPanel.add(vb, BorderLayout.CENTER);
+
+        JComponent container = null;
 
         for (int i = 0; i < dials.length; i += NUM_PARAMS) {
+            if (i % (NUM_PARAMS * 10) == 0){
+                container = new HBox();
+                vb.add(container);
+            }
             String label = (String) dials[i];
             String key = (String) dials[i];
             int minVal = (int) dials[i + 2];
             int maxVal = (int) dials[i + 3];
-            boolean symmetric = (boolean) dials[i+4];
-            int sub =  symmetric ? maxVal/2 + 1 : 0;
+            boolean symmetric = (boolean) dials[i + 4];
+            int sub = symmetric ? maxVal / 2 + 1 : 0;
 
-            String [] lbls = splitAtCapitalLetter(label,10);
+            String[] lbls = splitAtCapitalLetter(label, 10);
 
 
-            LabelledDial comp = new LabelledDial(lbls[0], this, key, Style.COLOR_A(), minVal, maxVal,sub) {
+            LabelledDial comp = new LabelledDial(lbls[0], this, key, Style.COLOR_A(), minVal, maxVal, sub) {
                 public boolean isSymmetric() {
-                    return symmetric ;
+                    return symmetric;
                 }
             };
-            if (lbls.length>1){
+            if (lbls.length > 1) {
                 comp.addAdditionalLabel(lbls[1]);
             }
             container.add(comp);
 
         }
-        soundPanel.add(container, BorderLayout.CENTER);
     }
 
+    @Override
     public Object[] emitAll(String key) {
         int param = 0;
         for (int i = 0; i < dials.length; i += NUM_PARAMS) {
@@ -127,5 +171,16 @@ public class BehringerUBXa extends edisyn.Synth {
         int val = getModel().get(key);
         return buildNRPN(getChannelOut(),
                 param, val);
+    }
+
+    @Override
+    public void handleSynthCCOrNRPN(Midi.CCData data) {
+        for (int i = 0; i < dials.length; i += NUM_PARAMS) {
+            if (dials[i+1].equals(data.number)) {
+                String label = (String) dials[i];
+                getModel().set(label, data.value);
+                break;
+            }
+        }
     }
 }
