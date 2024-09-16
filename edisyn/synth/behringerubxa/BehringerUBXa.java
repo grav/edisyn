@@ -12,6 +12,9 @@ public class BehringerUBXa extends Synth {
     private static final int NUM_PARAMS_DIALS = 5;
     public static final String BITMASK_SEP = "@@";
 
+    private String lastDialKey = null;
+    private int lastDialIdx = -1;
+
     private final Object[] dials = {
             "ControlPortamentoAmount", 0, 0, 16383, false,
             "ControlPortamentoBend", 1, 0, 16383, false,
@@ -212,15 +215,38 @@ public class BehringerUBXa extends Synth {
 
     }
 
+    private Object[] emitDial(String key, int i){
+        int param = (int) dials[i + 1];
+        int val = getModel().get(key);
+        return buildNRPN(getChannelOut(),
+                param, val);
+    }
+
+    private Object[] emitCheckboxGroup(String keyPrefix, int i){
+        int param = (int) checkboxGroups[i+1];
+        int sum = 0;
+        int n = 0;
+        for (String checkbox : (String[]) checkboxGroups[i + 3]) {
+            String k = (keyPrefix + BITMASK_SEP + checkbox);
+            sum += getModel().get(k) << n;
+            n++;
+        }
+        return buildNRPN(getChannelOut(),param,sum);
+    }
+
     @Override
     public Object[] emitAll(String key) {
+        if (key.equals(lastDialKey)) {
+            // Caching
+            return emitDial(key, lastDialIdx);
+        }
+
         for (int i = 0; i < dials.length; i += NUM_PARAMS_DIALS) {
             String label = (String) dials[i];
             if (label.equals(key)) {
-                int param = (int) dials[i + 1];
-                int val = getModel().get(key);
-                return buildNRPN(getChannelOut(),
-                        param, val);
+                lastDialKey = key;
+                lastDialIdx = i;
+                return emitDial(key,i);
             }
         }
 
@@ -228,15 +254,7 @@ public class BehringerUBXa extends Synth {
 
         for (int i = 0; i < checkboxGroups.length; i += NUM_PARAMS_CHECKBOXES) {
             if (checkboxGroups[i].equals(keyPrefix)) {
-                int param = (int) checkboxGroups[i+1];
-                int sum = 0;
-                int n = 0;
-                for (String checkbox : (String[]) checkboxGroups[i + 3]) {
-                    String k = (keyPrefix + BITMASK_SEP + checkbox);
-                    sum += getModel().get(k) << n;
-                    n++;
-                }
-                return buildNRPN(getChannelOut(),param,sum);
+                return emitCheckboxGroup(keyPrefix,i);
             }
         }
 
