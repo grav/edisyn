@@ -324,13 +324,11 @@ public class BehringerUBXa extends Synth {
 
         for (int i = 0; i < checkboxGroups.length; i += NUM_PARAMS_CHECKBOXES) {
             if (checkboxGroups[i+1].equals(data.number)) {
-                System.out.println(checkboxGroups[i]+","+ data.type+","+ toBinaryString(data.value)+","+data.increment);
                 String prefix = (String) checkboxGroups[i];
                 for (int j = 0; j < (int)checkboxGroups[i+2]; j++){
                     String suffix = ((String[]) checkboxGroups[i+3])[j];
                     String key = prefix + BITMASK_SEP + suffix;
                     int val = (data.value & (1 << j)) >> j;
-                    System.out.println(key+","+toBinaryString(val));
                     getModel().set(key, val);
                 }
                 return;
