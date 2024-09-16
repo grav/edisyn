@@ -12,8 +12,11 @@ public class BehringerUBXa extends Synth {
     private static final int NUM_PARAMS_DIALS = 5;
     public static final String BITMASK_SEP = "@@";
 
-    private String lastDialKey = null;
-    private int lastDialIdx = -1;
+    private String lastDialEmitKey = null;
+    private int lastDialEmitIdx = -1;
+
+    private int lastDialReceiveIdx = -1;
+
 
     private final Object[] dials = {
             "ControlPortamentoAmount", 0, 0, 16383, false,
@@ -86,7 +89,19 @@ public class BehringerUBXa extends Synth {
     private static final int NUM_PARAMS_CHECKBOXES = 4;
 
     private final Object[] checkboxGroups = {
-            "ModulationLFOMods",261,4,new String[]{"LFO Track on~LFO Track off","LFOEnv2 Rate on~LFOEnv2 Rate off","TempoLock","LFOTrig"},
+            "ModulationLFOMods", 261, 4, new String[]{"LFO Track on~LFO Track off", "LFOEnv2 Rate on~LFOEnv2 Rate off", "TempoLock", "LFOTrig"},
+            "ControlPortamentoSettings", 7, 4, new String[]{"Match", "Quantize", "Bend", "Exponential"},
+            "PerformanceSettings", 129, 6, new String[]{"Bend Osc2 only~Bend Osc1 & Osc2", "Custom bend~Bend +/- 2", "OSC1", "OSC2", "Upper", "Lower"},
+            "PerformanceLFOMods", 135, 4, new String[]{"Track", "Envelope", "TempoLock", "LFOTrig"},
+            "ModulationChannel1Sends", 263, 3, new String[]{"C1 OSC1 LFO on~C1 OSC1 LFO off", "C1 OSC2 LFO on~C1 OSC2 LFO off", "C1 Flt LFO on~C1 Flt LFO off"},
+            "ModulationChannel1Mods", 264, 2, new String[]{"C1 Quant on~C1 Quant off", "LFOEnv1 Inv on~LFOEnv1 Inv off"},
+            "ModulationChannel2Sends", 265, 3, new String[]{"C2 PWM1 LFO on~C2 PWM1 LFO off", "C2 PWM2 LFO on~C2 PWM2 LFO off", "C2 Vol LFO on~C2 Vol LFO off"},
+            "ModulationChannel2Mods", 266, 2, new String[]{"C2 Quant on~C2 Quant off", "LFOEnv2 Inv on~LFOEnv2 Inv off"},
+            "EnvelopesFilterMods", 397, 5, new String[]{"Flip", "Repeat", "Retrig", "Loop", "Legato"},
+            "EnvelopesLoudnessMods", 398, 5, new String[]{"Flip", "Repeat", "Retrig", "Loop", "Legato"},
+            "OscillatorsMode", 516, 2, new String[]{"OSC2 sync on~OSC2 sync off", "OSC2 f-env on~OSC2 f-env off"},
+            "OscillatorsOSC1State", 517, 3, new String[]{"OSC1 full~OSC1 off", "OSC1 VCO LFO 180~OSC1 VCO LFO 0", "OSC1 PWM LFO 180~OSC1 PWM LFO 0"},
+            "FilterModes", 644, 2, new String[]{"Filter track on~Filter track off", "4 pole filter~2 pole filter"},
     };
 
     public static String getSynthName() {
@@ -238,16 +253,16 @@ public class BehringerUBXa extends Synth {
 
     @Override
     public Object[] emitAll(String key) {
-        if (key.equals(lastDialKey)) {
+        if (key.equals(lastDialEmitKey)) {
             // Caching
-            return emitDial(key, lastDialIdx);
+            return emitDial(key, lastDialEmitIdx);
         }
 
         for (int i = 0; i < dials.length; i += NUM_PARAMS_DIALS) {
             String label = (String) dials[i];
             if (label.equals(key)) {
-                lastDialKey = key;
-                lastDialIdx = i;
+                lastDialEmitKey = key;
+                lastDialEmitIdx = i;
                 return emitDial(key,i);
             }
         }
@@ -264,13 +279,25 @@ public class BehringerUBXa extends Synth {
         return null;
     }
 
+    private void setValueForDial(int dialIdx, int value){
+        String label = (String) dials[dialIdx];
+        getModel().set(label, value);
+
+    }
+
     @Override
     public void handleSynthCCOrNRPN(Midi.CCData data) {
+
+        if (dials[lastDialReceiveIdx+1].equals(data.number)){
+            // Caching
+            setValueForDial(lastDialReceiveIdx, data.value);
+        }
+
         for (int i = 0; i < dials.length; i += NUM_PARAMS_DIALS) {
             if (dials[i+1].equals(data.number)) {
-                String label = (String) dials[i];
-                getModel().set(label, data.value);
-                break;
+                lastDialReceiveIdx = i;
+                setValueForDial(i, data.value);
+                return;
             }
         }
     }
