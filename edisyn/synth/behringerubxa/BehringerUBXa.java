@@ -82,7 +82,7 @@ public class BehringerUBXa extends Synth {
 
     private static final int NUM_PARAMS_CHECKBOXES = 4;
 
-    private final Object[] checkboxes = {
+    private final Object[] checkboxGroups = {
             "ModulationLFOMods",261,4,new String[]{"LFO Track on~LFO Track off","LFOEnv2 Rate on~LFOEnv2 Rate off","TempoLock","LFOTrig"},
     };
 
@@ -186,15 +186,15 @@ public class BehringerUBXa extends Synth {
 
         }
 
-        assert checkboxes.length % NUM_PARAMS_CHECKBOXES == 0;
+        assert checkboxGroups.length % NUM_PARAMS_CHECKBOXES == 0;
 
-        for (int i = 0; i < checkboxes.length; i+=NUM_PARAMS_CHECKBOXES) {
+        for (int i = 0; i < checkboxGroups.length; i+=NUM_PARAMS_CHECKBOXES) {
             hbox = new HBox();
             vbox.add(hbox);
-            String key = (String) checkboxes[i];
+            String key = (String) checkboxGroups[i];
 
-            int bitWidth = (int) checkboxes[i+2];
-            String[] lbls = (String[])checkboxes[i + 3];
+            int bitWidth = (int) checkboxGroups[i+2];
+            String[] lbls = (String[]) checkboxGroups[i + 3];
             assert lbls.length == bitWidth;
             for (String lbl : lbls) {
                 JComponent comp;
@@ -214,11 +214,10 @@ public class BehringerUBXa extends Synth {
 
     @Override
     public Object[] emitAll(String key) {
-        int param;
         for (int i = 0; i < dials.length; i += NUM_PARAMS_DIALS) {
             String label = (String) dials[i];
             if (label.equals(key)) {
-                param = (int) dials[i + 1];
+                int param = (int) dials[i + 1];
                 int val = getModel().get(key);
                 return buildNRPN(getChannelOut(),
                         param, val);
@@ -227,13 +226,17 @@ public class BehringerUBXa extends Synth {
 
         String keyPrefix = key.split(BITMASK_SEP)[0];
 
-        for (int i = 0; i < checkboxes.length; i += NUM_PARAMS_CHECKBOXES) {
-            if (checkboxes[i].equals(keyPrefix)) {
-                for (String v : (String[]) checkboxes[i + 3]) {
-                    if ((keyPrefix + BITMASK_SEP + v).equals(key)) {
-                        System.out.println(v);
-                    }
+        for (int i = 0; i < checkboxGroups.length; i += NUM_PARAMS_CHECKBOXES) {
+            if (checkboxGroups[i].equals(keyPrefix)) {
+                int param = (int) checkboxGroups[i+1];
+                int sum = 0;
+                int n = 0;
+                for (String checkbox : (String[]) checkboxGroups[i + 3]) {
+                    String k = (keyPrefix + BITMASK_SEP + checkbox);
+                    sum += getModel().get(k) << n;
+                    n++;
                 }
+                return buildNRPN(getChannelOut(),param,sum);
             }
         }
 
