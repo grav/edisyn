@@ -193,8 +193,10 @@ public class BehringerUBXa extends Synth {
 
         for (int i = 0; i < checkboxGroups.length; i+=NUM_PARAMS_CHECKBOXES) {
             hbox = new HBox();
-            vbox.add(hbox);
             String key = (String) checkboxGroups[i];
+            Category c= new Category(this,key, Color.WHITE);
+            c.add(hbox);
+            vbox.add(c);
 
             int bitWidth = (int) checkboxGroups[i+2];
             String[] lbls = (String[]) checkboxGroups[i + 3];
