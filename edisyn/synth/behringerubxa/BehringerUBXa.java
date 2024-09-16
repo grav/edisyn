@@ -332,6 +332,7 @@ public class BehringerUBXa extends Synth {
                     System.out.println(key+","+toBinaryString(val));
                     getModel().set(key, val);
                 }
+                return;
             }
         }
     }
