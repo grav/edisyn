@@ -221,7 +221,8 @@ public class BehringerUBXa extends Synth {
                 if (lbl.contains("~")) {
                     String[] strs = lbl.split("~");
                     String prefix = longestCommonWordPrefix(strs[0], strs[1]);
-                    comp = new Chooser(prefix, this, key + BITMASK_SEP + lbl, strs, new int[]{0, 1});
+                    String[] opts = new String[]{strs[1],strs[0]}; // order is "switched"
+                    comp = new Chooser(prefix, this, key + BITMASK_SEP + lbl, opts, new int[]{0, 1});
                 } else {
                     comp = new CheckBox(lbl, this, key + BITMASK_SEP + lbl);
                 }
