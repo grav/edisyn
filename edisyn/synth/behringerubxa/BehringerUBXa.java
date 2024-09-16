@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class BehringerUBXa extends Synth {
 
-    private static final int NUM_PARAMS = 5;
+    private static final int NUM_PARAMS_DIALS = 5;
 
     private final Object[] dials = {
             "ControlPortamentoAmount", 0, 0, 16383, false,
@@ -79,6 +79,12 @@ public class BehringerUBXa extends Synth {
 
     };
 
+    private static final int NUM_PARAMS_CHECKBOXES = 4;
+
+    private final Object[] checkboxes = {
+            "ModulationLFOMods",261,4,new String[]{"LFO Track on~LFO Track off","LFOEnv2 Rate on~LFOEnv2 Rate off","TempoLock","LFOTrig"},
+    };
+
     public static String getSynthName() {
         return "Behringer UB-Xa";
     }
@@ -116,22 +122,46 @@ public class BehringerUBXa extends Synth {
         return new String[]{input};
     }
 
+    public static String longestCommonWordPrefix(String str1, String str2) {
+        String[] words1 = str1.split(" ");
+        String[] words2 = str2.split(" ");
+
+        int minLength = Math.min(words1.length, words2.length);
+
+        StringBuilder commonPrefix = new StringBuilder();
+
+        for (int i = 0; i < minLength; i++) {
+            if (!words1[i].equals(words2[i])) {
+                break;
+            }
+            commonPrefix.append(words1[i]).append(" ");
+        }
+
+        // Remove the last extra space if any common prefix is found
+        if (!commonPrefix.isEmpty()) {
+            commonPrefix.setLength(commonPrefix.length() - 1);
+        }
+
+        return commonPrefix.toString();
+    }
+
+
     public BehringerUBXa() {
 
-        assert dials.length % NUM_PARAMS == 0;
+        assert dials.length % NUM_PARAMS_DIALS == 0;
 
 
         JComponent soundPanel = new SynthPanel(this);
         addTab("Controls", soundPanel);
-        JComponent vb = new VBox();
-        soundPanel.add(vb, BorderLayout.CENTER);
+        JComponent vbox = new VBox();
+        soundPanel.add(vbox, BorderLayout.CENTER);
 
-        JComponent container = null;
+        JComponent hbox = null;
 
-        for (int i = 0; i < dials.length; i += NUM_PARAMS) {
-            if (i % (NUM_PARAMS * 10) == 0){
-                container = new HBox();
-                vb.add(container);
+        for (int i = 0; i < dials.length; i += NUM_PARAMS_DIALS) {
+            if (i % (NUM_PARAMS_DIALS * 10) == 0){
+                hbox = new HBox();
+                vbox.add(hbox);
             }
             String label = (String) dials[i];
             String key = (String) dials[i];
@@ -151,15 +181,40 @@ public class BehringerUBXa extends Synth {
             if (lbls.length > 1) {
                 comp.addAdditionalLabel(lbls[1]);
             }
-            container.add(comp);
+            hbox.add(comp);
 
         }
+
+        assert checkboxes.length % NUM_PARAMS_CHECKBOXES == 0;
+
+        for (int i = 0; i < checkboxes.length; i+=NUM_PARAMS_CHECKBOXES) {
+            hbox = new HBox();
+            vbox.add(hbox);
+            String key = (String) checkboxes[i];
+
+            int bitWidth = (int) checkboxes[i+2];
+            String[] lbls = (String[])checkboxes[i + 3];
+            assert lbls.length == bitWidth;
+            for (String lbl : lbls) {
+                JComponent comp;
+                if (lbl.contains("~")){
+                    String [] strs = lbl.split("~");
+                    String prefix = longestCommonWordPrefix(strs[0], strs[1]);
+                    comp = new Chooser(prefix, this, key+"$$"+lbl, strs, new int[]{0,1});
+                } else {
+                    comp = new CheckBox(lbl, this, key+"$$"+lbl);
+                }
+                hbox.add(comp);
+            }
+        }
+
+
     }
 
     @Override
     public Object[] emitAll(String key) {
         int param = 0;
-        for (int i = 0; i < dials.length; i += NUM_PARAMS) {
+        for (int i = 0; i < dials.length; i += NUM_PARAMS_DIALS) {
             String label = (String) dials[i];
             if (label.equals(key)) {
                 param = (int) dials[i + 1];
@@ -175,7 +230,7 @@ public class BehringerUBXa extends Synth {
 
     @Override
     public void handleSynthCCOrNRPN(Midi.CCData data) {
-        for (int i = 0; i < dials.length; i += NUM_PARAMS) {
+        for (int i = 0; i < dials.length; i += NUM_PARAMS_DIALS) {
             if (dials[i+1].equals(data.number)) {
                 String label = (String) dials[i];
                 getModel().set(label, data.value);
