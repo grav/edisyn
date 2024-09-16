@@ -178,7 +178,7 @@ public class BehringerUBXa extends Synth {
         JComponent hbox = null;
 
         for (int i = 0; i < dials.length; i += NUM_PARAMS_DIALS) {
-            if (i % (NUM_PARAMS_DIALS * 10) == 0){
+            if (i % (NUM_PARAMS_DIALS * 10) == 0) {
                 hbox = new HBox();
                 vbox.add(hbox);
             }
@@ -206,24 +206,24 @@ public class BehringerUBXa extends Synth {
 
         assert checkboxGroups.length % NUM_PARAMS_CHECKBOXES == 0;
 
-        for (int i = 0; i < checkboxGroups.length; i+=NUM_PARAMS_CHECKBOXES) {
+        for (int i = 0; i < checkboxGroups.length; i += NUM_PARAMS_CHECKBOXES) {
             hbox = new HBox();
             String key = (String) checkboxGroups[i];
-            Category c= new Category(this,key, Color.WHITE);
+            Category c = new Category(this, key, Color.WHITE);
             c.add(hbox);
             vbox.add(c);
 
-            int bitWidth = (int) checkboxGroups[i+2];
+            int bitWidth = (int) checkboxGroups[i + 2];
             String[] lbls = (String[]) checkboxGroups[i + 3];
             assert lbls.length == bitWidth;
             for (String lbl : lbls) {
                 JComponent comp;
-                if (lbl.contains("~")){
-                    String [] strs = lbl.split("~");
+                if (lbl.contains("~")) {
+                    String[] strs = lbl.split("~");
                     String prefix = longestCommonWordPrefix(strs[0], strs[1]);
-                    comp = new Chooser(prefix, this, key+BITMASK_SEP+lbl, strs, new int[]{0,1});
+                    comp = new Chooser(prefix, this, key + BITMASK_SEP + lbl, strs, new int[]{0, 1});
                 } else {
-                    comp = new CheckBox(lbl, this, key+ BITMASK_SEP +lbl);
+                    comp = new CheckBox(lbl, this, key + BITMASK_SEP + lbl);
                 }
                 hbox.add(comp);
             }
@@ -232,15 +232,15 @@ public class BehringerUBXa extends Synth {
 
     }
 
-    private Object[] emitDial(String key, int i){
+    private Object[] emitDial(String key, int i) {
         int param = (int) dials[i + 1];
         int val = getModel().get(key);
         return buildNRPN(getChannelOut(),
                 param, val);
     }
 
-    private Object[] emitCheckboxGroup(String keyPrefix, int i){
-        int param = (int) checkboxGroups[i+1];
+    private Object[] emitCheckboxGroup(String keyPrefix, int i) {
+        int param = (int) checkboxGroups[i + 1];
         int sum = 0;
         int n = 0;
         for (String checkbox : (String[]) checkboxGroups[i + 3]) {
@@ -248,7 +248,7 @@ public class BehringerUBXa extends Synth {
             sum += getModel().get(k) << n;
             n++;
         }
-        return buildNRPN(getChannelOut(),param,sum);
+        return buildNRPN(getChannelOut(), param, sum);
     }
 
     @Override
@@ -263,7 +263,7 @@ public class BehringerUBXa extends Synth {
             if (label.equals(key)) {
                 lastDialEmitKey = key;
                 lastDialEmitIdx = i;
-                return emitDial(key,i);
+                return emitDial(key, i);
             }
         }
 
@@ -271,7 +271,7 @@ public class BehringerUBXa extends Synth {
 
         for (int i = 0; i < checkboxGroups.length; i += NUM_PARAMS_CHECKBOXES) {
             if (checkboxGroups[i].equals(keyPrefix)) {
-                return emitCheckboxGroup(keyPrefix,i);
+                return emitCheckboxGroup(keyPrefix, i);
             }
         }
 
@@ -279,25 +279,52 @@ public class BehringerUBXa extends Synth {
         return null;
     }
 
-    private void setValueForDial(int dialIdx, int value){
+    private void setValueForDial(int dialIdx, int value) {
         String label = (String) dials[dialIdx];
         getModel().set(label, value);
 
     }
 
+    private static String toBinaryString(int number) {
+        // Convert the integer to a binary string
+        String binaryString = Integer.toBinaryString(number);
+        // Add the 0b prefix
+        return "0b" + binaryString;
+    }
+
+    @Override
+    public boolean getRequiresNRPNLSB() {
+        return true;
+    }
+
+    @Override
+    public boolean getRequiresNRPNMSB() {
+        return true;
+    }
+
     @Override
     public void handleSynthCCOrNRPN(Midi.CCData data) {
 
-        if (dials[lastDialReceiveIdx+1].equals(data.number)){
+        if (dials[lastDialReceiveIdx + 1].equals(data.number)) {
             // Caching
             setValueForDial(lastDialReceiveIdx, data.value);
         }
 
         for (int i = 0; i < dials.length; i += NUM_PARAMS_DIALS) {
-            if (dials[i+1].equals(data.number)) {
+            if (dials[i + 1].equals(data.number)) {
                 lastDialReceiveIdx = i;
                 setValueForDial(i, data.value);
                 return;
+            }
+
+
+        }
+
+
+        for (int i = 0; i < checkboxGroups.length; i += NUM_PARAMS_CHECKBOXES) {
+            if (checkboxGroups[i+1].equals(data.number)) {
+                System.out.println(checkboxGroups[i]+","+ data.type+","+ toBinaryString(data.value)+","+data.increment);
+
             }
         }
     }
