@@ -10,6 +10,7 @@ import java.awt.*;
 public class BehringerUBXa extends Synth {
 
     private static final int NUM_PARAMS_DIALS = 5;
+    public static final String BITMASK_SEP = "@@";
 
     private final Object[] dials = {
             "ControlPortamentoAmount", 0, 0, 16383, false,
@@ -200,9 +201,9 @@ public class BehringerUBXa extends Synth {
                 if (lbl.contains("~")){
                     String [] strs = lbl.split("~");
                     String prefix = longestCommonWordPrefix(strs[0], strs[1]);
-                    comp = new Chooser(prefix, this, key+"$$"+lbl, strs, new int[]{0,1});
+                    comp = new Chooser(prefix, this, key+BITMASK_SEP+lbl, strs, new int[]{0,1});
                 } else {
-                    comp = new CheckBox(lbl, this, key+"$$"+lbl);
+                    comp = new CheckBox(lbl, this, key+ BITMASK_SEP +lbl);
                 }
                 hbox.add(comp);
             }
@@ -213,7 +214,7 @@ public class BehringerUBXa extends Synth {
 
     @Override
     public Object[] emitAll(String key) {
-        int param = 0;
+        int param;
         for (int i = 0; i < dials.length; i += NUM_PARAMS_DIALS) {
             String label = (String) dials[i];
             if (label.equals(key)) {
@@ -221,6 +222,18 @@ public class BehringerUBXa extends Synth {
                 int val = getModel().get(key);
                 return buildNRPN(getChannelOut(),
                         param, val);
+            }
+        }
+
+        String keyPrefix = key.split(BITMASK_SEP)[0];
+
+        for (int i = 0; i < checkboxes.length; i += NUM_PARAMS_CHECKBOXES) {
+            if (checkboxes[i].equals(keyPrefix)) {
+                for (String v : (String[]) checkboxes[i + 3]) {
+                    if ((keyPrefix + BITMASK_SEP + v).equals(key)) {
+                        System.out.println(v);
+                    }
+                }
             }
         }
 
