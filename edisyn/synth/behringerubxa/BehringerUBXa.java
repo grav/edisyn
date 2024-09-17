@@ -284,6 +284,14 @@ public class BehringerUBXa extends Synth {
                 param, val);
     }
 
+
+    private Object[] emitSelector(String key, int i) {
+        int param = (int) selectors[i + 1];
+        int val = getModel().get(key);
+        return buildNRPN(getChannelOut(),
+                param, val);
+    }
+
     private Object[] emitCheckboxGroup(String keyPrefix, int i) {
         int param = (int) checkboxGroups[i + 1];
         int sum = 0;
@@ -317,6 +325,12 @@ public class BehringerUBXa extends Synth {
         for (int i = 0; i < checkboxGroups.length; i += NUM_PARAMS_CHECKBOXES) {
             if (checkboxGroups[i].equals(keyPrefix)) {
                 return emitCheckboxGroup(keyPrefix, i);
+            }
+        }
+
+        for (int i= 0; i<selectors.length; i+=NUM_PARAMS_SELECTORS){
+            if (selectors[i].equals(keyPrefix)) {
+                return emitSelector(keyPrefix, i);
             }
         }
 
@@ -376,6 +390,13 @@ public class BehringerUBXa extends Synth {
                     getModel().set(key, val);
                 }
                 return;
+            }
+        }
+
+        for (int i = 0; i < selectors.length; i += NUM_PARAMS_SELECTORS) {
+            if (selectors[i+1].equals(data.number)) {
+                String key = (String) selectors[i];
+                getModel().set(key,data.value);
             }
         }
     }
