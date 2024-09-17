@@ -104,6 +104,19 @@ public class BehringerUBXa extends Synth {
             "FilterModes", 644, 2, new String[]{"Filter track on~Filter track off", "4 pole filter~2 pole filter"},
     };
 
+    private static final int NUM_PARAMS_SELECTORS = 5;
+
+    private final Object[] selectors = {
+            "ControlUnisonNotePriority", 9, 0, 2, new String[]{"Below", "Above", "Last"},
+            "ControlChordModeNotePriority", 10, 0, 2, new String[]{"Below", "Above", "Last"},
+            "PerformanceLFOShapes", 133, 0, 7, new String[]{"Sine", "Saw", "Square", "InverseSaw", "SH", "Triangle", "Sample Hold", "Noise"},
+            "ModulationLFOShapes", 262, 0, 7, new String[]{"Sine", "Saw", "Square", "InverseSaw", "SH", "Triangle", "Sample Hold", "Noise"},
+            "OscillatorsOSC1Shapes", 518, 0, 2, new String[]{"Osc1 pulse", "Osc1 saw", "Osc1 tri"},
+            "OscillatorsOSC2Shapes", 520, 0, 2, new String[]{"Osc2 pulse", "Osc2 saw", "Osc2 tri"},
+            "OscillatorsOSC1Quantization", 535, 0, 5, new String[]{"Octaves", "Semitones", "Free", "+/- Octaves", "+/- Semitones", "+/- Free"},
+            "OscillatorsOSC2Quantization", 536, 0, 5, new String[]{"Octaves", "Semitones", "Free", "+/- Octaves", "+/- Semitones", "+/- Free"}
+    };
+
     public static String getSynthName() {
         return "Behringer UB-Xa";
     }
@@ -165,6 +178,8 @@ public class BehringerUBXa extends Synth {
     }
 
 
+
+
     public BehringerUBXa() {
 
         assert dials.length % NUM_PARAMS_DIALS == 0;
@@ -175,12 +190,41 @@ public class BehringerUBXa extends Synth {
         JComponent vbox = new VBox();
         soundPanel.add(vbox, BorderLayout.CENTER);
 
+
+        addDials(vbox);
+
+        addCheckboxGroups(vbox);
+
+        addSelectors(vbox);
+
+    }
+    private void addSelectors(JComponent container) {
+        JComponent hbox = null;
+        for (int i = 0; i< selectors.length; i+=NUM_PARAMS_SELECTORS) {
+            if (i% (NUM_PARAMS_SELECTORS * 4) == 0 ){
+                hbox = new HBox();
+                container.add(hbox);
+            }
+            String label = (String) selectors[i];
+            String [] opts = (String[]) selectors[i+4];
+            int[] vals = new int[opts.length];
+            for (int j = 0; j < opts.length; j++) {
+                vals[j] = j;
+            }
+            JComponent comp = new Chooser(label, this, label, opts, vals);
+
+            hbox.add(comp);
+        }
+    }
+
+    private void addDials(JComponent container) {
         JComponent hbox = null;
 
         for (int i = 0; i < dials.length; i += NUM_PARAMS_DIALS) {
+
             if (i % (NUM_PARAMS_DIALS * 10) == 0) {
                 hbox = new HBox();
-                vbox.add(hbox);
+                container.add(hbox);
             }
             String label = (String) dials[i];
             String key = (String) dials[i];
@@ -203,15 +247,17 @@ public class BehringerUBXa extends Synth {
             hbox.add(comp);
 
         }
+    }
 
+    private void addCheckboxGroups(JComponent container) {
         assert checkboxGroups.length % NUM_PARAMS_CHECKBOXES == 0;
 
         for (int i = 0; i < checkboxGroups.length; i += NUM_PARAMS_CHECKBOXES) {
-            hbox = new HBox();
+            JComponent hbox = new HBox();
             String key = (String) checkboxGroups[i];
             Category c = new Category(this, key, Color.WHITE);
             c.add(hbox);
-            vbox.add(c);
+            container.add(c);
 
             int bitWidth = (int) checkboxGroups[i + 2];
             String[] lbls = (String[]) checkboxGroups[i + 3];
@@ -229,8 +275,6 @@ public class BehringerUBXa extends Synth {
                 hbox.add(comp);
             }
         }
-
-
     }
 
     private Object[] emitDial(String key, int i) {
