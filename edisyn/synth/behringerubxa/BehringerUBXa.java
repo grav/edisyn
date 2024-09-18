@@ -259,8 +259,7 @@ public class BehringerUBXa extends Synth {
         }
     }
 
-    private void addCheckboxGroup(JComponent container, String key, int bitWidth,String[] lbls) {
-        assert lbls.length == bitWidth;
+    private void addCheckboxGroup(JComponent container, String key,String[] lbls) {
         for (String lbl : lbls) {
             JComponent comp;
             if (lbl.contains("~")) {
@@ -285,9 +284,8 @@ public class BehringerUBXa extends Synth {
             Category c = new Category(this, key, Color.WHITE);
             c.add(hbox);
             container.add(c);
-            int bitWidth = (int) checkboxGroups[i + 2];
             String[] labels = (String[]) checkboxGroups[i + 3];
-            addCheckboxGroup(hbox,key,bitWidth,labels);
+            addCheckboxGroup(hbox,key,labels);
         }
     }
 
