@@ -191,13 +191,24 @@ public class BehringerUBXa extends Synth {
         soundPanel.add(vbox, BorderLayout.CENTER);
 
 
-        addDials(vbox);
-
+//        addDials(vbox);
+//
         addCheckboxGroups(vbox);
 
-        addSelectors(vbox);
+//        addSelectors(vbox);
 
     }
+
+    private void addSelector(JComponent container,String key, String[] opts){
+        int[] vals = new int[opts.length];
+        for (int j = 0; j < opts.length; j++) {
+            vals[j] = j;
+        }
+        JComponent comp = new Chooser(key, this, key, opts, vals);
+
+        container.add(comp);
+    }
+
     private void addSelectors(JComponent container) {
         JComponent hbox = null;
         for (int i = 0; i< selectors.length; i+=NUM_PARAMS_SELECTORS) {
@@ -207,14 +218,25 @@ public class BehringerUBXa extends Synth {
             }
             String label = (String) selectors[i];
             String [] opts = (String[]) selectors[i+4];
-            int[] vals = new int[opts.length];
-            for (int j = 0; j < opts.length; j++) {
-                vals[j] = j;
-            }
-            JComponent comp = new Chooser(label, this, label, opts, vals);
-
-            hbox.add(comp);
+            addSelector(hbox, label, opts);
         }
+    }
+
+    private void addDial(JComponent container,String key, int minVal, int maxVal, boolean symmetric) {
+        int sub = symmetric ? maxVal / 2 + 1 : 0;
+
+        String[] lbls = splitAtCapitalLetter(key, 10);
+
+
+        LabelledDial comp = new LabelledDial(lbls[0], this, key, Style.COLOR_A(), minVal, maxVal, sub) {
+            public boolean isSymmetric() {
+                return symmetric;
+            }
+        };
+        if (lbls.length > 1) {
+            comp.addAdditionalLabel(lbls[1]);
+        }
+        container.add(comp);
     }
 
     private void addDials(JComponent container) {
@@ -226,27 +248,32 @@ public class BehringerUBXa extends Synth {
                 hbox = new HBox();
                 container.add(hbox);
             }
-            String label = (String) dials[i];
             String key = (String) dials[i];
             int minVal = (int) dials[i + 2];
             int maxVal = (int) dials[i + 3];
             boolean symmetric = (boolean) dials[i + 4];
-            int sub = symmetric ? maxVal / 2 + 1 : 0;
 
-            String[] lbls = splitAtCapitalLetter(label, 10);
+            addDial(hbox, key, minVal, maxVal, symmetric);
 
-
-            LabelledDial comp = new LabelledDial(lbls[0], this, key, Style.COLOR_A(), minVal, maxVal, sub) {
-                public boolean isSymmetric() {
-                    return symmetric;
-                }
-            };
-            if (lbls.length > 1) {
-                comp.addAdditionalLabel(lbls[1]);
-            }
-            hbox.add(comp);
 
         }
+    }
+
+    private void addCheckboxGroup(JComponent container, String key, int bitWidth,String[] lbls) {
+        assert lbls.length == bitWidth;
+        for (String lbl : lbls) {
+            JComponent comp;
+            if (lbl.contains("~")) {
+                String[] strs = lbl.split("~");
+                String prefix = longestCommonWordPrefix(strs[0], strs[1]);
+                String[] opts = new String[]{strs[1],strs[0]}; // order is "switched"
+                comp = new Chooser(prefix, this, key + BITMASK_SEP + lbl, opts, new int[]{0, 1});
+            } else {
+                comp = new CheckBox(lbl, this, key + BITMASK_SEP + lbl);
+            }
+            container.add(comp);
+        }
+
     }
 
     private void addCheckboxGroups(JComponent container) {
@@ -258,22 +285,9 @@ public class BehringerUBXa extends Synth {
             Category c = new Category(this, key, Color.WHITE);
             c.add(hbox);
             container.add(c);
-
             int bitWidth = (int) checkboxGroups[i + 2];
-            String[] lbls = (String[]) checkboxGroups[i + 3];
-            assert lbls.length == bitWidth;
-            for (String lbl : lbls) {
-                JComponent comp;
-                if (lbl.contains("~")) {
-                    String[] strs = lbl.split("~");
-                    String prefix = longestCommonWordPrefix(strs[0], strs[1]);
-                    String[] opts = new String[]{strs[1],strs[0]}; // order is "switched"
-                    comp = new Chooser(prefix, this, key + BITMASK_SEP + lbl, opts, new int[]{0, 1});
-                } else {
-                    comp = new CheckBox(lbl, this, key + BITMASK_SEP + lbl);
-                }
-                hbox.add(comp);
-            }
+            String[] labels = (String[]) checkboxGroups[i + 3];
+            addCheckboxGroup(hbox,key,bitWidth,labels);
         }
     }
 
@@ -367,6 +381,7 @@ public class BehringerUBXa extends Synth {
         if (dials[lastDialReceiveIdx + 1].equals(data.number)) {
             // Caching
             setValueForDial(lastDialReceiveIdx, data.value);
+            return;
         }
 
         for (int i = 0; i < dials.length; i += NUM_PARAMS_DIALS) {
