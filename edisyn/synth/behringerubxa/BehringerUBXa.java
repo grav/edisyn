@@ -179,6 +179,7 @@ public class BehringerUBXa extends Synth {
             "PerformanceLFOShapes", 133, 0, 7, new String[]{"Sine", "Saw", "Square", "InverseSaw", "SH", "Triangle", "Sample Hold", "Noise"},
             "ModulationLFOShapes", 262, 0, 7, new String[]{"Sine", "Saw", "Square", "InverseSaw", "SH", "Triangle", "Sample Hold", "Noise"},
             "OscillatorsOSC1Shapes", 518, 0, 2, new String[]{"Osc1 pulse", "Osc1 saw", "Osc1 tri"},
+            "OscillatorsOSC2State", 519, 0, 2, new String[]{"Osc2 half", "Osc2 full", "Osc2 off"},
             "OscillatorsOSC2Shapes", 520, 0, 2, new String[]{"Osc2 pulse", "Osc2 saw", "Osc2 tri"},
             "OscillatorsOSC1Quantization", 535, 0, 5, new String[]{"Octaves", "Semitones", "Free", "+/- Octaves", "+/- Semitones", "+/- Free"},
             "OscillatorsOSC2Quantization", 536, 0, 5, new String[]{"Octaves", "Semitones", "Free", "+/- Octaves", "+/- Semitones", "+/- Free"},
@@ -198,7 +199,15 @@ public class BehringerUBXa extends Synth {
             "KeyboardAftertouchAssignment", 1283, 0, 1, new String[]{"ChannelPressure", "PolyAftertouch"},
             "KeyboardAftertouchCurviness", 1284, 0, 2, new String[]{"Soft", "Medium", "Hard"},
             "PedalSustainAssignment", 1408, 0, 6, new String[]{"Patch Up", "Patch Down", "Program Up", "Program Down", "Sustain", "Hold", "Sostenuto"},
-            "PedalSustainPolarity", 1409, 0, 2,
+            "PedalSustainPolarity", 1409, 0, 2, new String[]{"Negative", "Positive", "Disabled"},
+            "PedalProgramAssignment", 1411, 0, 6, new String[]{"Patch Up", "Patch Down", "Program Up", "Program Down", "Sustain", "Hold", "Sostenuto"},
+            "PedalProgramPolarity", 1412, 0, 2, new String[]{"Negative", "Positive", "Disabled"},
+            "PedalVibratoAssignment", 1417, 0, 8, new String[]{"Filter", "Vibrato", "Attack", "Release", "Decay", "General1 cc16", "General2 cc17", "General3 cc18", "General4 cc19"},
+            "PedalFilterAssignment", 1421, 0, 8, new String[]{"Filter", "Vibrato", "Attack", "Release", "Decay", "General1 cc16", "General2 cc17", "General3 cc18", "General4 cc19"},
+            "SysexDeviceId", 1536, 0, 15, new String[]{"Channel 1", "Channel 2", "Channel 3", "Channel 4", "Channel 5", "Channel 6", "Channel 7", "Channel 8", "Channel 9", "Channel 10", "Channel 11", "Channel 12", "Channel 13", "Channel 14", "Channel 15", "Channel 16"},
+            "SequencerTime", 2433, 0, 6, new String[]{"1/4 notes", "1/8 notes", "1/16 notes", "1/32 notes", "1/4 triplets", "1/8 triplets", "1/16 triplets"},
+            "SequencerSync", 2435, 0, 1, new String[]{"Global", "Retrigger"}
+
 
     };
 
@@ -276,11 +285,11 @@ public class BehringerUBXa extends Synth {
         soundPanel.add(vbox, BorderLayout.CENTER);
 
 
-//        addDials(vbox);
-//
+        addDials(vbox);
+
         addCheckboxGroups(vbox);
 
-//        addSelectors(vbox);
+        addSelectors(vbox);
 
     }
 
