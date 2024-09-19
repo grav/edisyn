@@ -86,35 +86,130 @@ public class BehringerUBXa extends Synth {
     }
 
 
-    private void addDialByKey(String key){
+    private void addDialByKey(JComponent container, String key){
         assert !usedKeys.contains(key);
-        // TODO
-        usedKeys.add(key);
+        for (int i=0;i<dials.length;i+=NUM_PARAMS_DIALS){
+            if (dials[i].equals(key)){
+                int minVal = (int) dials[i + 2];
+                int maxVal = (int) dials[i + 3];
+                boolean symmetric = (boolean) dials[i + 4];
+
+                addDial(container, key, minVal, maxVal, symmetric);
+                usedKeys.add(key);
+                break;
+            }
+        }
+
+
+
     }
 
     public BehringerUBXa() {
 
-        assert dials.length % NUM_PARAMS_DIALS == 0;
+        try {
+
+            JComponent main = new SynthPanel(this);
+            JComponent vbox = new VBox();
+
+            Category c = new Category(this,"Oscillators",Color.WHITE);
+            vbox.add(c);
+
+            HBox oscDials = new HBox();
+            addDialByKey(oscDials, "OscillatorsOSC1Transpose");
+            addDialByKey(oscDials, "OscillatorsOSC1PWAmount");
+            addDialByKey(oscDials, "OscillatorsOSC2Transpose");
+            addDialByKey(oscDials, "OscillatorsOSC2PWAmount");
+            vbox.add(oscDials);
+
+            HBox oscButtons = new HBox();
+            addSelectorByKey(oscButtons,"OscillatorsOSC1Shapes");
+            addCheckboxGroupByKey(oscButtons, "OscillatorsMode");
+            addSelectorByKey(oscButtons,"OscillatorsOSC2Shapes");
+            vbox.add(oscButtons);
+
+            HBox oscillatorEnableButtons = new HBox();
+            addCheckboxGroupByKey(oscillatorEnableButtons,"OscillatorsOSC1State");
+            addSelectorByKey(oscillatorEnableButtons,"OscillatorsOSC2State");
+            vbox.add(oscillatorEnableButtons);
+
+            c = new Category(this, "Filter", Color.WHITE);
+            vbox.add(c);
+
+            HBox filterDials = new HBox();
+            addDialByKey(filterDials,"FilterFrequency");
+            addDialByKey(filterDials,"FilterResonance");
+            addDialByKey(filterDials,"FilterModulation");
+            addDialByKey(filterDials,"FilterNoise");
+            vbox.add(filterDials);
+
+            HBox filterButtons = new HBox();
+            addCheckboxGroupByKey(filterButtons,"FilterModes");
+
+            vbox.add(filterButtons);
+
+            c = new Category(this, "Filter Envelope", Color.WHITE);
+            vbox.add(c);
+            HBox filterEnvDials = new HBox();
+            addDialByKey(filterEnvDials,"EnvelopesFilterA");
+            addDialByKey(filterEnvDials,"EnvelopesFilterD");
+            addDialByKey(filterEnvDials,"EnvelopesFilterS");
+            addDialByKey(filterEnvDials,"EnvelopesFilterR");
+
+            EnvelopeDisplay ed = new EnvelopeDisplay(
+                    this,Style.ENVELOPE_COLOR(),
+                    new String[]{null,"EnvelopesFilterA","EnvelopesFilterD",null,"EnvelopesFilterR"},
+                    new String[]{null,null,null,"EnvelopesFilterS",null},
+                    new double[]{0,1.0/16383,1.0/16383,1.0/16383,1.0/16383},
+                    new double[]{0,1,0.25,1.0/16383,0}
+
+            );
+            filterEnvDials.add(ed);
+
+            vbox.add(filterEnvDials);
 
 
-        JComponent soundPanel = new SynthPanel(this);
-        addTab("Oscillators", soundPanel);
-        JComponent vbox = new VBox();
-        soundPanel.add(vbox,BorderLayout.CENTER);
-        addDialByKey("FilterFrequency");
-        addDialByKey("FilterFrequency");
+            main.add(vbox, BorderLayout.CENTER);
+            addTab("Main", main);
 
-        addTab("All", soundPanel);
-        vbox = new VBox();
-        soundPanel.add(vbox, BorderLayout.CENTER);
+            JComponent generalPanel = new SynthPanel(this);
+
+            vbox = new VBox();
+            generalPanel.add(vbox, BorderLayout.CENTER);
 
 
-        addDials(vbox);
+            addDials(vbox);
 
-        addCheckboxGroups(vbox);
+            addCheckboxGroups(vbox);
 
-        addSelectors(vbox);
+            addSelectors(vbox);
+            addTab("General", generalPanel);
 
+        } catch (Exception e){
+            throw new Error("BOOM!");
+        }
+
+    }
+
+    private void addSelectorByKey(JComponent container, String key) {
+        for(int i =0; i<selectors.length;i+=NUM_PARAMS_SELECTORS){
+            if(key.equals(selectors[i])){
+                String [] opts = (String[]) selectors[i+4];
+                addSelector(container, key, opts);
+                usedKeys.add(key);
+                break;
+            }
+        }
+    }
+
+    private void addCheckboxGroupByKey(JComponent container, String key) {
+        for (int i=0;i<checkboxGroups.length;i+=NUM_PARAMS_CHECKBOXES){
+            if (key.equals(checkboxGroups[i])) {
+                String[] labels = (String[]) checkboxGroups[i + 3];
+                addCheckboxGroup(container, key,labels);
+                usedKeys.add(key);
+                break;
+            }
+        }
     }
 
     private void addSelector(JComponent container,String key, String[] opts){
@@ -161,6 +256,7 @@ public class BehringerUBXa extends Synth {
     private void addDials(JComponent container) {
         JComponent hbox = null;
 
+        assert dials.length % NUM_PARAMS_DIALS == 0;
         for (int i = 0; i < dials.length; i += NUM_PARAMS_DIALS) {
 
             String key = (String) dials[i];
