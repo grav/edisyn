@@ -158,14 +158,33 @@ public class BehringerUBXa extends Synth {
             EnvelopeDisplay ed = new EnvelopeDisplay(
                     this,Style.ENVELOPE_COLOR(),
                     new String[]{null,"EnvelopesFilterA","EnvelopesFilterD",null,"EnvelopesFilterR"},
-                    new String[]{null,null,null,"EnvelopesFilterS",null},
-                    new double[]{0,1.0/16383,1.0/16383,1.0/16383,1.0/16383},
-                    new double[]{0,1,0.25,1.0/16383,0}
+                    new String[]{null,null,"EnvelopesFilterS","EnvelopesFilterS",null},
+                    new double[]{0,0.25/16383,0.25/16383,0.25,0.25/16383},
+                    new double[]{0,1.0,1.0/16383,1.0/16383,0}
 
             );
             filterEnvDials.add(ed);
-
             vbox.add(filterEnvDials);
+
+            c = new Category(this, "Loudness Envelope", Color.WHITE);
+            vbox.add(c);
+            HBox ampEnvDials = new HBox();
+            addDialByKey(ampEnvDials,"EnvelopesLoudnessA");
+            addDialByKey(ampEnvDials,"EnvelopesLoudnessD");
+            addDialByKey(ampEnvDials,"EnvelopesLoudnessS");
+            addDialByKey(ampEnvDials,"EnvelopesLoudnessR");
+
+            ed = new EnvelopeDisplay(
+                    this,Style.ENVELOPE_COLOR(),
+                    new String[]{null,"EnvelopesLoudnessA","EnvelopesLoudnessD",null,"EnvelopesLoudnessR"},
+                    new String[]{null,null,"EnvelopesLoudnessS","EnvelopesLoudnessS",null},
+                    new double[]{0,0.25/16383,0.25/16383,0.25,0.25/16383},
+                    new double[]{0,1.0,1.0/16383,1.0/16383,0}
+
+            );
+            ampEnvDials.add(ed);
+
+            vbox.add(ampEnvDials);
 
 
             main.add(vbox, BorderLayout.CENTER);
