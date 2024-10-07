@@ -104,6 +104,30 @@ public class BehringerUBXa extends Synth {
 
     }
 
+    private JComponent makeEnv(String title, String a, String d, String s, String r){
+        VBox container = new VBox();
+        JComponent c = new Category(this, title, Color.WHITE);
+        container.add(c);
+        HBox filterEnvDials = new HBox();
+        addDialByKey(filterEnvDials,a);
+        addDialByKey(filterEnvDials,d);
+        addDialByKey(filterEnvDials,s);
+        addDialByKey(filterEnvDials,r);
+
+        EnvelopeDisplay ed = new EnvelopeDisplay(
+                this,Style.ENVELOPE_COLOR(),
+                new String[]{null,a,d,null,r},
+                new String[]{null,null,s,s,null},
+                new double[]{0,0.25/16383,0.25/16383,0.25,0.25/16383},
+                new double[]{0,1.0,1.0/16383,1.0/16383,0}
+
+        );
+        filterEnvDials.add(ed);
+        container.add(filterEnvDials);
+
+        return container;
+    }
+
     public BehringerUBXa() {
 
         try {
@@ -147,44 +171,11 @@ public class BehringerUBXa extends Synth {
 
             vbox.add(filterButtons);
 
-            c = new Category(this, "Filter Envelope", Color.WHITE);
-            vbox.add(c);
-            HBox filterEnvDials = new HBox();
-            addDialByKey(filterEnvDials,"EnvelopesFilterA");
-            addDialByKey(filterEnvDials,"EnvelopesFilterD");
-            addDialByKey(filterEnvDials,"EnvelopesFilterS");
-            addDialByKey(filterEnvDials,"EnvelopesFilterR");
+            JComponent filterEnv = makeEnv("Filter Envelope","EnvelopesFilterA","EnvelopesFilterD","EnvelopesFilterS","EnvelopesFilterR");
+            vbox.add(filterEnv);
 
-            EnvelopeDisplay ed = new EnvelopeDisplay(
-                    this,Style.ENVELOPE_COLOR(),
-                    new String[]{null,"EnvelopesFilterA","EnvelopesFilterD",null,"EnvelopesFilterR"},
-                    new String[]{null,null,"EnvelopesFilterS","EnvelopesFilterS",null},
-                    new double[]{0,0.25/16383,0.25/16383,0.25,0.25/16383},
-                    new double[]{0,1.0,1.0/16383,1.0/16383,0}
-
-            );
-            filterEnvDials.add(ed);
-            vbox.add(filterEnvDials);
-
-            c = new Category(this, "Loudness Envelope", Color.WHITE);
-            vbox.add(c);
-            HBox ampEnvDials = new HBox();
-            addDialByKey(ampEnvDials,"EnvelopesLoudnessA");
-            addDialByKey(ampEnvDials,"EnvelopesLoudnessD");
-            addDialByKey(ampEnvDials,"EnvelopesLoudnessS");
-            addDialByKey(ampEnvDials,"EnvelopesLoudnessR");
-
-            ed = new EnvelopeDisplay(
-                    this,Style.ENVELOPE_COLOR(),
-                    new String[]{null,"EnvelopesLoudnessA","EnvelopesLoudnessD",null,"EnvelopesLoudnessR"},
-                    new String[]{null,null,"EnvelopesLoudnessS","EnvelopesLoudnessS",null},
-                    new double[]{0,0.25/16383,0.25/16383,0.25,0.25/16383},
-                    new double[]{0,1.0,1.0/16383,1.0/16383,0}
-
-            );
-            ampEnvDials.add(ed);
-
-            vbox.add(ampEnvDials);
+            JComponent loudnessEnv = makeEnv("Loudness Envelope","EnvelopesLoudnessA","EnvelopesLoudnessD","EnvelopesLoudnessS","EnvelopesLoudnessR");
+            vbox.add(loudnessEnv);
 
 
             main.add(vbox, BorderLayout.CENTER);
