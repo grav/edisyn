@@ -499,4 +499,52 @@ public class BehringerUBXa extends Synth {
             }
         }
     }
+
+    public static byte[] generatePaddedByteArray(String asciiString, int n) {
+        // Ensure the string is not longer than n characters
+        if (asciiString.length() > n) {
+            asciiString = asciiString.substring(0, n);
+        }
+
+        // Create a byte array of length n
+        byte[] byteArray = new byte[n];
+
+        // Copy the characters of the string into the byte array
+        for (int i = 0; i < asciiString.length(); i++) {
+            byteArray[i] = (byte) asciiString.charAt(i);
+        }
+
+        // Fill the remaining part of the array with spaces (ASCII value 32)
+        for (int i = asciiString.length(); i < n; i++) {
+            byteArray[i] = (byte) ' ';
+        }
+
+        return byteArray;
+    }
+
+    public byte[] requestCurrentDump()
+    {
+        byte[] data = new byte[36];
+        data[0] = (byte)0xF0;
+        data[1] = (byte)0x00;
+        data[2] = (byte)0x20;
+        data[3] = (byte)0x32;
+        data[4] = (byte)0x00;
+        data[5] = (byte)0x01;
+        data[6] = (byte)0x21;
+        data[7] = (byte)0x7F; // TODO - specify device (7f means all)
+        data[8] = (byte)0x74;
+        data[9] = (byte)0x07;
+        data[10] = (byte)0x03; // Request
+        data[11] = (byte)0x7F;
+        byte[] ext = generatePaddedByteArray("BIN ",4);
+        System.arraycopy(ext, 0, data, 12, ext.length);
+        byte[] fileName = generatePaddedByteArray("Lower Patch",16);
+        System.arraycopy(fileName, 0, data, 16, fileName.length);
+        data[32] = (byte)0x00;
+        data[33] = (byte)0x03;
+        data[34] = (byte)0x75;
+        data[35] = (byte)0xF7;
+        return data;
+    }
 }
