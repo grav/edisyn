@@ -320,13 +320,14 @@ public class BehringerUBXa extends Synth {
             if (key.indexOf(ctrlGrp) != 0) continue;
             if (usedKeys.contains(key)) continue;
 
-            if (j % 10 == 0) {
+            if (j % 4 == 0) {
                 hbox = new HBox();
                 vbox.add(hbox);
             }
             j += 1;
             String[] opts = (String[]) selectors[i + 2];
-            addSelector(hbox, key, key, opts);
+            String label = key.substring(ctrlGrp.length());
+            addSelector(hbox, key, label, opts);
 
         }
 
