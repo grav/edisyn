@@ -206,8 +206,6 @@ public class BehringerUBXa extends Synth {
         main.add(vbox, BorderLayout.CENTER);
         addTab("Main", main);
 
-
-
         for (String ctrlGrp : ctrlGroups) {
             JComponent p = new SynthPanel(this);
             JComponent box =  makeGroupedControls(ctrlGrp);
@@ -215,25 +213,20 @@ public class BehringerUBXa extends Synth {
             addTab(ctrlGrp, p);
         }
 
-//        addCheckboxGroups(vbox);
-
-//        addSelectors(vbox);
-
-        // Check that we've added all dials at this point
+        // Check that we've added all controls at this point
         for (int i = 0; i < dials.length; i += NUM_PARAMS_DIALS) {
             String key = (String) dials[i];
             assert (usedKeys.contains(key));
-
         }
+
         for (int i = 0; i < selectors.length; i += NUM_PARAMS_SELECTORS) {
             String key = (String) selectors[i];
             assert (usedKeys.contains(key));
-
         }
+
         for (int i = 0; i < checkboxGroups.length; i += NUM_PARAMS_CHECKBOXES) {
             String key = (String) checkboxGroups[i];
             assert (usedKeys.contains(key));
-
         }
     }
 
