@@ -2,11 +2,11 @@ package edisyn.synth.behringerubxa;
 
 public class ParameterList {
 
-    public static final int NUM_PARAMS_CHECKBOXES = 4;
 
     public static final String[] dialGroups = {"Control","Performance","Modulation","Envelopes","Oscillators",
             "Filter","ModMatrix","Amplifier","Panning","Atrophy","Sequencer"};
 
+    public static final int NUM_PARAMS_DIALS = 5;
     public static final Object[] dials = {
             "ControlPortamentoAmount", 0, 0, 16383, false,
             "ControlPortamentoBend", 1, 0, 16383, false,
@@ -123,10 +123,9 @@ public class ParameterList {
             "AtrophyProfileNameF", 2309, 32, 255, false,
             "SequencerStepCount", 2432, 0, 128, false,
             "SequencerGatetime", 2434, 0, 99, false,
-
-
     };
 
+    public static final int NUM_PARAMS_CHECKBOXES = 4;
     public static final Object[] checkboxGroups = {
             "ControlPortamentoSettings",7,4,new String[]{"Match","Quantize","Bend","Exponential"},
             "PerformanceSettings",129,6,new String[]{"Bend Osc2 only~Bend Osc1 & Osc2","Custom bend~Bend +/- 2","OSC1","OSC2","Upper","Lower"},
@@ -159,7 +158,7 @@ public class ParameterList {
     };
 
 
-
+    public static final int NUM_PARAMS_SELECTORS = 5;
     public static final Object[] selectors = {
             "ControlUnisonNotePriority", 9, 0, 2, new String[]{"Below", "Above", "Last"},
             "ControlChordModeNotePriority", 10, 0, 2, new String[]{"Below", "Above", "Last"},
@@ -194,7 +193,6 @@ public class ParameterList {
             "SysexDeviceId", 1536, 0, 15, new String[]{"Channel 1", "Channel 2", "Channel 3", "Channel 4", "Channel 5", "Channel 6", "Channel 7", "Channel 8", "Channel 9", "Channel 10", "Channel 11", "Channel 12", "Channel 13", "Channel 14", "Channel 15", "Channel 16"},
             "SequencerTime", 2433, 0, 6, new String[]{"1/4 notes", "1/8 notes", "1/16 notes", "1/32 notes", "1/4 triplets", "1/8 triplets", "1/16 triplets"},
             "SequencerSync", 2435, 0, 1, new String[]{"Global", "Retrigger"}
-
-
     };
+
 }

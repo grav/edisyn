@@ -19,8 +19,7 @@ public class BehringerUBXa extends Synth {
 
     private int lastDialReceiveIdx = -1;
 
-    public static final int NUM_PARAMS_SELECTORS = 5;
-    public static final int NUM_PARAMS_DIALS = 10;
+
 
     private final java.util.List<String> usedKeys = new ArrayList<>();
 
@@ -95,7 +94,6 @@ public class BehringerUBXa extends Synth {
                 boolean symmetric = (boolean) dials[i + 4];
 
                 addDial(container, key, label, minVal, maxVal, symmetric);
-                usedKeys.add(key);
                 break;
             }
         }
@@ -128,12 +126,35 @@ public class BehringerUBXa extends Synth {
     }
 
     public BehringerUBXa() {
-
+        assert checkboxGroups.length % NUM_PARAMS_CHECKBOXES == 0;
+        assert dials.length % NUM_PARAMS_DIALS == 0;
+        assert selectors.length % NUM_PARAMS_SELECTORS == 0;
 
         JComponent main = new SynthPanel(this);
         JComponent vbox = new VBox();
 
-        Category c = new Category(this, "Oscillators", Color.WHITE);
+        Category c = new Category(this,"Modulation",Color.WHITE);
+        vbox.add(c);
+        HBox modDials = new HBox();
+        vbox.add(modDials);
+        addDialByKey(modDials,"ModulationLFOTrigPoint","LFO Trig Point");
+        addDialByKey(modDials,"ModulationLFORate","LFO Rate");
+        addDialByKey(modDials,"ModulationLFOPhase","LFO Phase");
+        addDialByKey(modDials,"ModulationChannel1Amount","Channel 1 Amount");
+        addDialByKey(modDials,"ModulationChannel2Amount","Channel 2 Amount");
+        addDialByKey(modDials,"ModulationLFOTrim","LFO Trim");
+        HBox modSelsC1 = new HBox();
+        vbox.add(modSelsC1);
+        addCheckboxGroupByKey(modSelsC1,"ModulationChannel1Sends");
+        addCheckboxGroupByKey(modSelsC1,"ModulationChannel1Mods");
+        HBox modSelsC2 = new HBox();
+        vbox.add(modSelsC2);
+        addCheckboxGroupByKey(modSelsC2,"ModulationChannel2Sends");
+        addCheckboxGroupByKey(modSelsC2,"ModulationChannel2Mods");
+
+        addSelectorByKey(vbox,"ModulationLFOShapes","LFO Shapes");
+
+        c = new Category(this, "Oscillators", Color.WHITE);
         vbox.add(c);
 
         HBox oscDials = new HBox();
@@ -187,23 +208,31 @@ public class BehringerUBXa extends Synth {
 
         addDials(vbox);
 
+        // Check that we've added all dials at this point
+        for (int i = 0; i < dials.length; i += NUM_PARAMS_DIALS) {
+            String key = (String) dials[i];
+            assert (usedKeys.contains(key));
+
+        }
+
         addCheckboxGroups(vbox);
 
         addSelectors(vbox);
         addTab("General", generalPanel);
 
-
     }
 
     private void addSelectorByKey(JComponent container, String key, String label) {
+        boolean found = false;
         for (int i = 0; i < selectors.length; i += NUM_PARAMS_SELECTORS) {
             if (key.equals(selectors[i])) {
                 String[] opts = (String[]) selectors[i + 4];
-                addSelector(container, label, opts);
+                addSelector(container, key, label, opts);
                 usedKeys.add(key);
-                break;
+                found = true;
             }
         }
+        assert found;
     }
 
     private void addCheckboxGroupByKey(JComponent container, String key) {
@@ -217,12 +246,12 @@ public class BehringerUBXa extends Synth {
         }
     }
 
-    private void addSelector(JComponent container, String key, String[] opts) {
+    private void addSelector(JComponent container, String key, String label, String[] opts) {
         int[] vals = new int[opts.length];
         for (int j = 0; j < opts.length; j++) {
             vals[j] = j;
         }
-        JComponent comp = new Chooser(key, this, key, opts, vals);
+        JComponent comp = new Chooser(label, this, key, opts, vals);
 
         container.add(comp);
     }
@@ -238,7 +267,7 @@ public class BehringerUBXa extends Synth {
                 container.add(hbox);
             }
             String[] opts = (String[]) selectors[i + 4];
-            addSelector(hbox, key, opts);
+            addSelector(hbox, key, key,opts);
         }
     }
 
@@ -253,6 +282,8 @@ public class BehringerUBXa extends Synth {
         };
 
         container.add(comp);
+        usedKeys.add(key);
+
     }
 
     private void addDials(JComponent container) {
@@ -269,7 +300,7 @@ public class BehringerUBXa extends Synth {
                 if (key.indexOf(dialGroup) != 0) continue;
                 if (usedKeys.contains(key)) continue;
 
-                if (j % (NUM_PARAMS_DIALS) == 0) {
+                if (j % 10 == 0) {
                     hbox = new HBox();
                     vbox.add(hbox);
                 }
@@ -307,7 +338,6 @@ public class BehringerUBXa extends Synth {
     }
 
     private void addCheckboxGroups(JComponent container) {
-        assert checkboxGroups.length % NUM_PARAMS_CHECKBOXES == 0;
 
         for (int i = 0; i < checkboxGroups.length; i += NUM_PARAMS_CHECKBOXES) {
             String key = (String) checkboxGroups[i];
