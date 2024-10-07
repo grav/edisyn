@@ -100,7 +100,7 @@ public class BehringerUBXa extends Synth {
 
     }
 
-    private JComponent makeEnv(String title, String a, String d, String s, String r) {
+    private JComponent makeEnv(String title, String a, String d, String s, String r, String mods) {
         VBox container = new VBox();
         JComponent c = new Category(this, title, Color.WHITE);
         container.add(c);
@@ -119,6 +119,7 @@ public class BehringerUBXa extends Synth {
 
         );
         envDials.add(ed);
+        addCheckboxGroupByKey(envDials, mods);
         container.add(envDials);
 
         return container;
@@ -212,18 +213,12 @@ public class BehringerUBXa extends Synth {
         addDialByKey(filterDials, "FilterModulation", "Modulation");
         addDialByKey(filterDials, "FilterNoise", "Noise");
         vbox.add(filterDials);
-
-        HBox filterButtons = new HBox();
-        addCheckboxGroupByKey(filterButtons, "FilterModes");
-
-        vbox.add(filterButtons);
-
-        JComponent filterEnv = makeEnv("Filter Envelope", "EnvelopesFilterA", "EnvelopesFilterD", "EnvelopesFilterS", "EnvelopesFilterR");
+        addCheckboxGroupByKey(filterDials, "FilterModes");
+        JComponent filterEnv = makeEnv("Filter Envelope", "EnvelopesFilterA", "EnvelopesFilterD", "EnvelopesFilterS", "EnvelopesFilterR","EnvelopesFilterMods");
         vbox.add(filterEnv);
 
-        JComponent loudnessEnv = makeEnv("Loudness Envelope", "EnvelopesLoudnessA", "EnvelopesLoudnessD", "EnvelopesLoudnessS", "EnvelopesLoudnessR");
+        JComponent loudnessEnv = makeEnv("Loudness Envelope", "EnvelopesLoudnessA", "EnvelopesLoudnessD", "EnvelopesLoudnessS", "EnvelopesLoudnessR","EnvelopesLoudnessMods");
         vbox.add(loudnessEnv);
-
 
         main.add(vbox, BorderLayout.CENTER);
         addTab("Main", main);
