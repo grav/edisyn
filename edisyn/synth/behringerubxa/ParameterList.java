@@ -4,6 +4,9 @@ public class ParameterList {
 
     public static final int NUM_PARAMS_CHECKBOXES = 4;
 
+    public static final String[] dialGroups = {"Control","Performance","Modulation","Envelopes","Oscillators",
+            "Filter","ModMatrix","Amplifier","Panning","Atrophy","Sequencer"};
+
     public static final Object[] dials = {
             "ControlPortamentoAmount", 0, 0, 16383, false,
             "ControlPortamentoBend", 1, 0, 16383, false,
@@ -155,8 +158,7 @@ public class ParameterList {
 
     };
 
-    public static final int NUM_PARAMS_SELECTORS = 5;
-    public static final int NUM_PARAMS_DIALS = 5;
+
 
     public static final Object[] selectors = {
             "ControlUnisonNotePriority", 9, 0, 2, new String[]{"Below", "Above", "Last"},
