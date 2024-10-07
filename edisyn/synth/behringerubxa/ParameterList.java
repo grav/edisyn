@@ -4,7 +4,7 @@ public class ParameterList {
 
 
     public static final String[] ctrlGroups = {"Control", "Performance", "Envelopes", "Oscillators",
-            "Filter", "ModMatrix", "Amplifier", "Panning", "Atrophy", "Sequencer", "Arpeggiator", "Midi", "Keyboard", "Pedal", "Sysex", "Voice", "Surface", "Program","UI","Background"};
+            "Filter", "ModMatrix", "Amplifier", "Panning", "Atrophy", "Sequencer", "Arpeggiator", "Midi", "Keyboard", "Pedal", "Sysex", "Voice", "Surface", "Program", "UI", "Background"};
 
     public static final int NUM_PARAMS_DIALS = 5;
     public static final Object[] dials = {
