@@ -132,7 +132,29 @@ public class BehringerUBXa extends Synth {
         JComponent main = new SynthPanel(this);
         JComponent vbox = new VBox();
 
-        Category c = new Category(this, "Modulation", Color.WHITE);
+        Category c = new Category(this,"Control",Color.WHITE);
+        vbox.add(c);
+        HBox controls = new HBox();
+        vbox.add(controls);
+        addDialByKey(controls,"ControlPortamentoAmount","Portamento Amount");
+        addDialByKey(controls,"ControlUnison","Unison"); // would be nice with a button
+        addDialByKey(controls,"ControlDetune","Detune");
+
+        c = new Category(this,"Arpeggiator", Color.WHITE);
+        vbox.add(c);
+        HBox arp = new HBox();
+        vbox.add(arp);
+        addDialByKey(arp,"ArpeggiatorEnabled","Enabled"); //button?
+        addDialByKey(arp,"ArpeggiatorHold","Hold"); //button?
+        addDialByKey(arp,"ArpeggiatorGatetime","Gate Time");
+        addDialByKey(arp,"ArpeggiatorOctave","Octave");
+        addDialByKey(arp,"ArpeggiatorSwing","Swing");
+        addDialByKey(arp,"ArpeggiatorRepeat","Repeat");
+        addSelectorByKey(arp,"ArpeggiatorMode","Mode");
+        addSelectorByKey(arp,"ArpeggiatorTime","Time");
+        addSelectorByKey(arp,"ArpeggiatorSync","Sync");
+
+        c = new Category(this, "Modulation", Color.WHITE);
         vbox.add(c);
         HBox modDials = new HBox();
         vbox.add(modDials);
