@@ -155,6 +155,11 @@ public class BehringerUBXa extends Synth {
         vbox.add(modShapes);
         addSelectorByKey(modShapes, "ModulationLFOShapes", "LFO Shapes");
 
+        HBox modMisc = new HBox();
+        vbox.add(modMisc);
+        addCheckboxGroupByKey(modMisc, "ModulationLFOMods");
+        addCheckboxGroupByKey(modMisc, "ModulationQuirks");
+
         c = new Category(this, "Oscillators", Color.WHITE);
         vbox.add(c);
 
@@ -236,7 +241,7 @@ public class BehringerUBXa extends Synth {
         boolean found = false;
         for (int i = 0; i < selectors.length; i += NUM_PARAMS_SELECTORS) {
             if (key.equals(selectors[i])) {
-                String[] opts = (String[]) selectors[i + 4];
+                String[] opts = (String[]) selectors[i + 2];
                 addSelector(container, key, label, opts);
                 usedKeys.add(key);
                 found = true;
@@ -320,7 +325,7 @@ public class BehringerUBXa extends Synth {
                 vbox.add(hbox);
             }
             j += 1;
-            String[] opts = (String[]) selectors[i + 4];
+            String[] opts = (String[]) selectors[i + 2];
             addSelector(hbox, key, key, opts);
 
         }
