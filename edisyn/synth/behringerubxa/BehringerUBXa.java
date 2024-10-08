@@ -536,7 +536,7 @@ public class BehringerUBXa extends Synth {
         System.arraycopy(SysExHeader,0,data,0,SysExHeader.length);
         byte[] ext = generatePaddedByteArray("BIN ",4);
         System.arraycopy(ext, 0, data, 12, ext.length);
-        byte[] fileName = generatePaddedByteArray("Lower Patch",16);
+        byte[] fileName = generatePaddedByteArray("Upper Patch",16);
         System.arraycopy(fileName, 0, data, 16, fileName.length);
         data[32] = (byte)0x00;
         data[33] = (byte)0x03;
@@ -567,20 +567,49 @@ public class BehringerUBXa extends Synth {
         for(byte[] b : this.patchDump){
             System.arraycopy(b, 0, data, dstPos, b.length);
         }
-
+        byte[] data2 = data;//convertTo7Bit(data);
         for(int i = 0; i<SysExPosToKeyAndSize.length; i+=3){
             int pos = (int)SysExPosToKeyAndSize[i];
             String key = (String)SysExPosToKeyAndSize[i+1];
             int size = (int)SysExPosToKeyAndSize[i+2];
             // FIXME
-            int val = data[pos];// + data[pos+1] << 2;
-            System.out.println("Setting "+ key + " to " + val);
-            getModel().set(key, val);
-
+            int val = data2[pos];// + data[pos+1] << 2;
+            int i1 = data2[pos] + (data2[pos + 1] << 1);
+//            System.out.println(key+": "+ i1 + "(" +data2[pos]+","+data2[pos+1]+")");
+//            getModel().set(key, i1);
         }
 
         return true;
     }
+
+    byte[] convertTo7Bit(byte[] data)
+    {
+        // How big?
+        int size = (data.length) / 7 * 8;
+        if (data.length % 7 > 0)
+            size += (1 + data.length % 7);
+        byte[] newd = new byte[size];
+
+        int j = 0;
+        for(int i = 0; i < data.length; i+=7)
+        {
+            for(int x = 0; x < 7; x++)
+            {
+                if (j + x + 1 < newd.length)
+                {
+                    newd[j + x + 1] = (byte)(data[i + x] & 127);
+                    // Note that I have do to & 1 because data[i + x] is promoted to an int
+                    // first, and then shifted, and that makes a BIG NUMBER which requires
+                    // me to mask out the 1.  I hope this isn't the case for other stuff (which
+                    // is typically 7-bit).
+                    newd[j] = (byte)(newd[j] | (((data[i + x] >>> 7) & 1) << x));
+                }
+            }
+            j += 8;
+        }
+        return newd;
+    }
+
 
     @Override
     public int parse(byte[] data, boolean fromFile) {
@@ -593,8 +622,17 @@ public class BehringerUBXa extends Synth {
             patchDump.clear();
         } else {
             assert data[11] == patchDump.size();
-            int packageLength = data[12];
+
+
+            int packageLength = data[12]+1;
             int offset = 13;
+            if (patchDump.size() == 0){
+                int offset2 = offset+20;
+
+                byte[] data3 = Arrays.copyOfRange(data,offset2,offset2+10);
+                System.out.println(byteArrayAsHex(data3));
+
+            }
             patchDump.add(Arrays.copyOfRange(data, offset, packageLength+offset));
         }
         return PARSE_INCOMPLETE;
