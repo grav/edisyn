@@ -257,4 +257,16 @@ public class ParameterList {
             "SequencerSync", 2435, new String[]{"Global", "Retrigger"}
     };
 
+    // Manual mapping for now - might be able to generate
+    public static final Object[] SysExPosToKeyAndSize = {
+            20, "EnvelopesFilterA",2,
+            22, "EnvelopesFilterD",2,
+            24, "EnvelopesFilterS",2,
+            26, "EnvelopesFilterR",2,
+            28, "EnvelopesLoudnessA",2,
+            30, "EnvelopesLoudnessD",2,
+            32, "EnvelopesLoudnessS",2,
+            34, "EnvelopesLoudnessR",2,
+    };
+
 }

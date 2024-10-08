@@ -6,8 +6,12 @@ import edisyn.gui.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 
+import static edisyn.synth.behringerubxa.BehringerUBXaRec.EOF;
+import static edisyn.synth.behringerubxa.BehringerUBXaRec.SysExHeader;
 import static edisyn.synth.behringerubxa.ParameterList.*;
 
 public class BehringerUBXa extends Synth {
@@ -18,7 +22,7 @@ public class BehringerUBXa extends Synth {
     private int lastDialEmitIdx = -1;
 
     private int lastDialReceiveIdx = -1;
-
+    private final java.util.List<byte[]> patchDump = new ArrayList<>();
 
     private final java.util.List<String> usedKeys = new ArrayList<>();
 
@@ -522,21 +526,14 @@ public class BehringerUBXa extends Synth {
         return byteArray;
     }
 
+
     public byte[] requestCurrentDump()
     {
         byte[] data = new byte[36];
-        data[0] = (byte)0xF0;
-        data[1] = (byte)0x00;
-        data[2] = (byte)0x20;
-        data[3] = (byte)0x32;
-        data[4] = (byte)0x00;
-        data[5] = (byte)0x01;
-        data[6] = (byte)0x21;
-        data[7] = (byte)0x7F; // TODO - specify device (7f means all)
-        data[8] = (byte)0x74;
-        data[9] = (byte)0x07;
+
         data[10] = (byte)0x03; // Request
         data[11] = (byte)0x7F;
+        System.arraycopy(SysExHeader,0,data,0,SysExHeader.length);
         byte[] ext = generatePaddedByteArray("BIN ",4);
         System.arraycopy(ext, 0, data, 12, ext.length);
         byte[] fileName = generatePaddedByteArray("Lower Patch",16);
@@ -547,4 +544,60 @@ public class BehringerUBXa extends Synth {
         data[35] = (byte)0xF7;
         return data;
     }
+
+    public static String byteArrayAsHex(byte[] byteArray) {
+        StringBuilder hexString = new StringBuilder();
+
+        for (byte b : byteArray) {
+            // Convert each byte to hex and append to the string builder
+            hexString.append(String.format("%02X ", b));
+        }
+
+        // Print the final string, trimming the trailing space
+        return hexString.toString().trim();
+    }
+
+    public boolean parsePatch(){
+        int length = 0;
+        for(byte[] b : this.patchDump){
+            length += b.length;
+        }
+        byte[] data = new byte[length];
+        int dstPos = 0;
+        for(byte[] b : this.patchDump){
+            System.arraycopy(b, 0, data, dstPos, b.length);
+        }
+
+        for(int i = 0; i<SysExPosToKeyAndSize.length; i+=3){
+            int pos = (int)SysExPosToKeyAndSize[i];
+            String key = (String)SysExPosToKeyAndSize[i+1];
+            int size = (int)SysExPosToKeyAndSize[i+2];
+            // FIXME
+            int val = data[pos];// + data[pos+1] << 2;
+            System.out.println("Setting "+ key + " to " + val);
+            getModel().set(key, val);
+
+        }
+
+        return true;
+    }
+
+    @Override
+    public int parse(byte[] data, boolean fromFile) {
+        if (data.length== EOF.length &&
+                BehringerUBXaRec.msgStartsWith(data,BehringerUBXaRec.EOF)
+        ) return parsePatch() ? PARSE_SUCCEEDED : PARSE_FAILED;
+
+        if (data[10] == (byte)0x01){
+            // Clear on header
+            patchDump.clear();
+        } else {
+            assert data[11] == patchDump.size();
+            int packageLength = data[12];
+            int offset = 13;
+            patchDump.add(Arrays.copyOfRange(data, offset, packageLength+offset));
+        }
+        return PARSE_INCOMPLETE;
+    }
+
 }
