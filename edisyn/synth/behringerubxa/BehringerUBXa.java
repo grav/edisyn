@@ -155,34 +155,37 @@ public class BehringerUBXa extends Synth {
         assert selectors.length % NUM_PARAMS_SELECTORS == 0;
 
         JComponent main = new SynthPanel(this);
-        JComponent vbox = new VBox();
+        JComponent vboxLeft = new VBox();
 
         Category c = new Category(this,"Control",Color.WHITE);
-        vbox.add(c);
+        vboxLeft.add(c);
         HBox controls = new HBox();
-        vbox.add(controls);
+        vboxLeft.add(controls);
         addDialByKey(controls,"ControlPortamentoAmount","Portamento Amount");
         addDialByKey(controls,"ControlUnison","Unison"); // would be nice with a button
         addDialByKey(controls,"ControlDetune","Detune");
 
         c = new Category(this,"Arpeggiator", Color.WHITE);
-        vbox.add(c);
-        HBox arp = new HBox();
-        vbox.add(arp);
-        addDialByKey(arp,"ArpeggiatorEnabled","Enabled"); //button?
-        addDialByKey(arp,"ArpeggiatorHold","Hold"); //button?
-        addDialByKey(arp,"ArpeggiatorGatetime","Gate Time");
-        addDialByKey(arp,"ArpeggiatorOctave","Octave");
-        addDialByKey(arp,"ArpeggiatorSwing","Swing");
-        addDialByKey(arp,"ArpeggiatorRepeat","Repeat");
-        addChooserByKey(arp,"ArpeggiatorMode","Mode");
-        addChooserByKey(arp,"ArpeggiatorTime","Time");
-        addChooserByKey(arp,"ArpeggiatorSync","Sync");
+        vboxLeft.add(c);
+        HBox arpDials = new HBox();
+        vboxLeft.add(arpDials);
+        addDialByKey(arpDials,"ArpeggiatorEnabled","Enabled"); //button?
+        addDialByKey(arpDials,"ArpeggiatorHold","Hold"); //button?
+        addDialByKey(arpDials,"ArpeggiatorGatetime","Gate Time");
+        addDialByKey(arpDials,"ArpeggiatorOctave","Octave");
+        addDialByKey(arpDials,"ArpeggiatorSwing","Swing");
+        addDialByKey(arpDials,"ArpeggiatorRepeat","Repeat");
+
+        HBox arpChoosers = new HBox();
+        addChooserByKey(arpChoosers,"ArpeggiatorMode","Mode");
+        addChooserByKey(arpChoosers,"ArpeggiatorTime","Time");
+        addChooserByKey(arpChoosers,"ArpeggiatorSync","Sync");
+        vboxLeft.add(arpChoosers);
 
         c = new Category(this, "Modulation", Color.WHITE);
-        vbox.add(c);
+        vboxLeft.add(c);
         HBox modDials = new HBox();
-        vbox.add(modDials);
+        vboxLeft.add(modDials);
         addDialByKey(modDials, "ModulationLFOTrigPoint", "LFOTrigPoint");
         addDialByKey(modDials, "ModulationLFORate", "LFORate");
         addDialByKey(modDials, "ModulationLFOPhase", "LFOPhase");
@@ -198,28 +201,29 @@ public class BehringerUBXa extends Synth {
         h.add(modSelsC2);
         addCheckboxGroupByKey(modSelsC2, "ModulationChannel2Sends");
         addCheckboxGroupByKey(modSelsC2, "ModulationChannel2Mods");
-        vbox.add(h);
+        vboxLeft.add(h);
 
         HBox modShapes = new HBox();
-        vbox.add(modShapes);
+        vboxLeft.add(modShapes);
         addChooserByKey(modShapes, "ModulationLFOShapes", "LFO Shapes");
 
         HBox modMisc = new HBox();
-        vbox.add(modMisc);
+        vboxLeft.add(modMisc);
         addCheckboxGroupByKey(modMisc, "ModulationLFOMods");
         HBox modQuirks = new HBox();
         addCheckboxGroupByKey(modQuirks, "ModulationQuirks");
-        vbox.add(modQuirks);
+        vboxLeft.add(modQuirks);
 
+        VBox vboxRight = new VBox();
         c = new Category(this, "Oscillators", Color.WHITE);
-        vbox.add(c);
+        vboxRight.add(c);
 
         HBox oscDials = new HBox();
         addDialByKey(oscDials, "OscillatorsOSC1Transpose", "OSC1 Transpose");
         addDialByKey(oscDials, "OscillatorsOSC1PWAmount", "OSC1 PW Amount");
         addDialByKey(oscDials, "OscillatorsOSC2Transpose", "OSC2 Transpose");
         addDialByKey(oscDials, "OscillatorsOSC2PWAmount", "OSC2 PW Amount");
-        vbox.add(oscDials);
+        vboxRight.add(oscDials);
 
         HBox h2 = new HBox();
         VBox oscButtons = new VBox();
@@ -233,27 +237,31 @@ public class BehringerUBXa extends Synth {
         addChooserByKey(oscillatorEnableButtons, "OscillatorsOSC2State", "OSC2 State");
         h2.add(oscillatorEnableButtons);
 
-        vbox.add(h2);
+        vboxRight.add(h2);
 
         c = new Category(this, "Filter", Color.WHITE);
-        vbox.add(c);
+        vboxRight.add(c);
 
         HBox filterDials = new HBox();
         addDialByKey(filterDials, "FilterFrequency", "Frequency");
         addDialByKey(filterDials, "FilterResonance", "Resonance");
         addDialByKey(filterDials, "FilterModulation", "Modulation");
         addDialByKey(filterDials, "FilterNoise", "Noise");
-        vbox.add(filterDials);
+        vboxRight.add(filterDials);
         HBox h3 = new HBox();
-        vbox.add(h3);
+        vboxRight.add(h3);
         addCheckboxGroupByKey(h3, "FilterModes");
         JComponent filterEnv = makeEnv("Filter Envelope", "EnvelopesFilterA", "EnvelopesFilterD", "EnvelopesFilterS", "EnvelopesFilterR","EnvelopesFilterMods");
-        vbox.add(filterEnv);
+        vboxRight.add(filterEnv);
 
         JComponent loudnessEnv = makeEnv("Loudness Envelope", "EnvelopesLoudnessA", "EnvelopesLoudnessD", "EnvelopesLoudnessS", "EnvelopesLoudnessR","EnvelopesLoudnessMods");
-        vbox.add(loudnessEnv);
+        vboxRight.add(loudnessEnv);
 
-        main.add(vbox, BorderLayout.CENTER);
+        HBox mainH = new HBox();
+        mainH.add(vboxLeft);
+        mainH.add(vboxRight);
+
+        main.add(mainH, BorderLayout.CENTER);
         addTab("Main", main);
 
         for (String ctrlGrp : ctrlGroups) {
