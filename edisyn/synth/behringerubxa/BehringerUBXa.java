@@ -173,9 +173,9 @@ public class BehringerUBXa extends Synth {
         addDialByKey(arp,"ArpeggiatorOctave","Octave");
         addDialByKey(arp,"ArpeggiatorSwing","Swing");
         addDialByKey(arp,"ArpeggiatorRepeat","Repeat");
-        addSelectorByKey(arp,"ArpeggiatorMode","Mode");
-        addSelectorByKey(arp,"ArpeggiatorTime","Time");
-        addSelectorByKey(arp,"ArpeggiatorSync","Sync");
+        addChooserByKey(arp,"ArpeggiatorMode","Mode");
+        addChooserByKey(arp,"ArpeggiatorTime","Time");
+        addChooserByKey(arp,"ArpeggiatorSync","Sync");
 
         c = new Category(this, "Modulation", Color.WHITE);
         vbox.add(c);
@@ -187,18 +187,20 @@ public class BehringerUBXa extends Synth {
         addDialByKey(modDials, "ModulationChannel1Amount", "Channel1Amount");
         addDialByKey(modDials, "ModulationChannel2Amount", "Channel2Amount");
         addDialByKey(modDials, "ModulationLFOTrim", "LFOTrim");
-        HBox modSelsC1 = new HBox();
-        vbox.add(modSelsC1);
+        HBox h = new HBox();
+        VBox modSelsC1 = new VBox();
+        h.add(modSelsC1);
         addCheckboxGroupByKey(modSelsC1, "ModulationChannel1Sends");
         addCheckboxGroupByKey(modSelsC1, "ModulationChannel1Mods");
-        HBox modSelsC2 = new HBox();
-        vbox.add(modSelsC2);
+        VBox modSelsC2 = new VBox();
+        h.add(modSelsC2);
         addCheckboxGroupByKey(modSelsC2, "ModulationChannel2Sends");
         addCheckboxGroupByKey(modSelsC2, "ModulationChannel2Mods");
+        vbox.add(h);
 
         HBox modShapes = new HBox();
         vbox.add(modShapes);
-        addSelectorByKey(modShapes, "ModulationLFOShapes", "LFO Shapes");
+        addChooserByKey(modShapes, "ModulationLFOShapes", "LFO Shapes");
 
         HBox modMisc = new HBox();
         vbox.add(modMisc);
@@ -216,14 +218,14 @@ public class BehringerUBXa extends Synth {
         vbox.add(oscDials);
 
         HBox oscButtons = new HBox();
-        addSelectorByKey(oscButtons, "OscillatorsOSC1Shapes", "OSC1 Shapes");
+        addChooserByKey(oscButtons, "OscillatorsOSC1Shapes", "OSC1 Shapes");
         addCheckboxGroupByKey(oscButtons, "OscillatorsMode");
-        addSelectorByKey(oscButtons, "OscillatorsOSC2Shapes", "OSC2 Shapes");
+        addChooserByKey(oscButtons, "OscillatorsOSC2Shapes", "OSC2 Shapes");
         vbox.add(oscButtons);
 
         HBox oscillatorEnableButtons = new HBox();
         addCheckboxGroupByKey(oscillatorEnableButtons, "OscillatorsOSC1State");
-        addSelectorByKey(oscillatorEnableButtons, "OscillatorsOSC2State", "OSC2 State");
+        addChooserByKey(oscillatorEnableButtons, "OscillatorsOSC2State", "OSC2 State");
         vbox.add(oscillatorEnableButtons);
 
         c = new Category(this, "Filter", Color.WHITE);
@@ -269,12 +271,12 @@ public class BehringerUBXa extends Synth {
         }
     }
 
-    private void addSelectorByKey(JComponent container, String key, String label) {
+    private void addChooserByKey(JComponent container, String key, String label) {
         boolean found = false;
         for (int i = 0; i < selectors.length; i += NUM_PARAMS_SELECTORS) {
             if (key.equals(selectors[i])) {
                 String[] opts = (String[]) selectors[i + 2];
-                addSelector(container, key, label, opts);
+                addChooser(container, key, label, opts);
                 usedKeys.add(key);
                 found = true;
             }
@@ -292,7 +294,7 @@ public class BehringerUBXa extends Synth {
         }
     }
 
-    private void addSelector(JComponent container, String key, String label, String[] opts) {
+    private void addChooser(JComponent container, String key, String label, String[] opts) {
         int[] vals = new int[opts.length];
         for (int j = 0; j < opts.length; j++) {
             vals[j] = j;
@@ -363,7 +365,7 @@ public class BehringerUBXa extends Synth {
             j += 1;
             String[] opts = (String[]) selectors[i + 2];
             String label = key.substring(ctrlGrp.length());
-            addSelector(hbox, key, label, opts);
+            addChooser(hbox, key, label, opts);
 
         }
 
@@ -387,7 +389,7 @@ public class BehringerUBXa extends Synth {
     private void addCheckboxGroup(JComponent container, String key, String[] lbls) {
         for (String lbl : lbls) {
             JComponent comp;
-            if (lbl.contains("~")) {
+            if (lbl.contains("~") ) {
                 String[] strs = lbl.split("~");
                 String prefix = longestCommonWordPrefix(strs[0], strs[1]);
                 String[] opts = new String[]{strs[1], strs[0]}; // order is "switched"
