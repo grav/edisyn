@@ -217,16 +217,19 @@ public class BehringerUBXa extends Synth {
         addDialByKey(oscDials, "OscillatorsOSC2PWAmount", "OSC2 PW Amount");
         vbox.add(oscDials);
 
-        HBox oscButtons = new HBox();
+        HBox h2 = new HBox();
+        VBox oscButtons = new VBox();
         addChooserByKey(oscButtons, "OscillatorsOSC1Shapes", "OSC1 Shapes");
         addCheckboxGroupByKey(oscButtons, "OscillatorsMode");
         addChooserByKey(oscButtons, "OscillatorsOSC2Shapes", "OSC2 Shapes");
-        vbox.add(oscButtons);
+        h2.add(oscButtons);
 
-        HBox oscillatorEnableButtons = new HBox();
+        VBox oscillatorEnableButtons = new VBox();
         addCheckboxGroupByKey(oscillatorEnableButtons, "OscillatorsOSC1State");
         addChooserByKey(oscillatorEnableButtons, "OscillatorsOSC2State", "OSC2 State");
-        vbox.add(oscillatorEnableButtons);
+        h2.add(oscillatorEnableButtons);
+
+        vbox.add(h2);
 
         c = new Category(this, "Filter", Color.WHITE);
         vbox.add(c);
