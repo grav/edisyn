@@ -122,9 +122,9 @@ public class BehringerUBXa extends Synth {
 
     }
 
-    private JComponent makeEnv(String title, String a, String d, String s, String r, String mods) {
+    private JComponent makeEnv(String title, String a, String d, String s, String r, String mods, Color color) {
         VBox container = new VBox();
-        JComponent c = new Category(this, title, Color.WHITE);
+        JComponent c = new Category(this, title, color);
         container.add(c);
         HBox envDials = new HBox();
         addDialByKey(envDials, a, "Attack");
@@ -157,7 +157,7 @@ public class BehringerUBXa extends Synth {
         JComponent main = new SynthPanel(this);
         JComponent vboxLeft = new VBox();
 
-        Category c = new Category(this,"Control",Color.WHITE);
+        Category c = new Category(this,"Behringer UB-Xa",Color.WHITE);
         vboxLeft.add(c);
         HBox controls = new HBox();
         vboxLeft.add(controls);
@@ -165,7 +165,7 @@ public class BehringerUBXa extends Synth {
         addDialByKey(controls,"ControlUnison","Unison"); // would be nice with a button
         addDialByKey(controls,"ControlDetune","Detune");
 
-        c = new Category(this,"Arpeggiator", Color.WHITE);
+        c = new Category(this,"Arpeggiator", Style.COLOR_A());
         vboxLeft.add(c);
         HBox arpDials = new HBox();
         vboxLeft.add(arpDials);
@@ -182,7 +182,7 @@ public class BehringerUBXa extends Synth {
         addChooserByKey(arpChoosers,"ArpeggiatorSync","Sync");
         vboxLeft.add(arpChoosers);
 
-        c = new Category(this, "Modulation", Color.WHITE);
+        c = new Category(this, "Modulation", Style.COLOR_C());
         vboxLeft.add(c);
         HBox modDials = new HBox();
         vboxLeft.add(modDials);
@@ -215,7 +215,7 @@ public class BehringerUBXa extends Synth {
         vboxLeft.add(modQuirks);
 
         VBox vboxRight = new VBox();
-        c = new Category(this, "Oscillators", Color.WHITE);
+        c = new Category(this, "Oscillators", Style.COLOR_A());
         vboxRight.add(c);
 
         HBox oscDials = new HBox();
@@ -239,7 +239,7 @@ public class BehringerUBXa extends Synth {
 
         vboxRight.add(h2);
 
-        c = new Category(this, "Filter", Color.WHITE);
+        c = new Category(this, "Filter", Style.COLOR_B());
         vboxRight.add(c);
 
         HBox filterDials = new HBox();
@@ -251,10 +251,10 @@ public class BehringerUBXa extends Synth {
         HBox h3 = new HBox();
         vboxRight.add(h3);
         addCheckboxGroupByKey(h3, "FilterModes");
-        JComponent filterEnv = makeEnv("Filter Envelope", "EnvelopesFilterA", "EnvelopesFilterD", "EnvelopesFilterS", "EnvelopesFilterR","EnvelopesFilterMods");
+        JComponent filterEnv = makeEnv("Filter Envelope", "EnvelopesFilterA", "EnvelopesFilterD", "EnvelopesFilterS", "EnvelopesFilterR","EnvelopesFilterMods",Style.COLOR_B());
         vboxRight.add(filterEnv);
 
-        JComponent loudnessEnv = makeEnv("Loudness Envelope", "EnvelopesLoudnessA", "EnvelopesLoudnessD", "EnvelopesLoudnessS", "EnvelopesLoudnessR","EnvelopesLoudnessMods");
+        JComponent loudnessEnv = makeEnv("Loudness Envelope", "EnvelopesLoudnessA", "EnvelopesLoudnessD", "EnvelopesLoudnessS", "EnvelopesLoudnessR","EnvelopesLoudnessMods",Style.COLOR_C());
         vboxRight.add(loudnessEnv);
 
         HBox mainH = new HBox();
