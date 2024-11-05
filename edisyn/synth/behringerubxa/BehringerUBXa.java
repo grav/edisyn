@@ -141,8 +141,10 @@ public class BehringerUBXa extends Synth {
 
         );
         envDials.add(ed);
-        addCheckboxGroupByKey(envDials, mods);
         container.add(envDials);
+        HBox h = new HBox();
+        addCheckboxGroupByKey(h, mods);
+        container.add(h);
 
         return container;
     }
@@ -205,7 +207,9 @@ public class BehringerUBXa extends Synth {
         HBox modMisc = new HBox();
         vbox.add(modMisc);
         addCheckboxGroupByKey(modMisc, "ModulationLFOMods");
-        addCheckboxGroupByKey(modMisc, "ModulationQuirks");
+        HBox modQuirks = new HBox();
+        addCheckboxGroupByKey(modQuirks, "ModulationQuirks");
+        vbox.add(modQuirks);
 
         c = new Category(this, "Oscillators", Color.WHITE);
         vbox.add(c);
@@ -240,7 +244,9 @@ public class BehringerUBXa extends Synth {
         addDialByKey(filterDials, "FilterModulation", "Modulation");
         addDialByKey(filterDials, "FilterNoise", "Noise");
         vbox.add(filterDials);
-        addCheckboxGroupByKey(filterDials, "FilterModes");
+        HBox h3 = new HBox();
+        vbox.add(h3);
+        addCheckboxGroupByKey(h3, "FilterModes");
         JComponent filterEnv = makeEnv("Filter Envelope", "EnvelopesFilterA", "EnvelopesFilterD", "EnvelopesFilterS", "EnvelopesFilterR","EnvelopesFilterMods");
         vbox.add(filterEnv);
 
