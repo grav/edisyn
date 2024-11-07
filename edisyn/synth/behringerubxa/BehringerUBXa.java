@@ -122,10 +122,8 @@ public class BehringerUBXa extends Synth {
 
     }
 
-    private JComponent makeEnv(String title, String a, String d, String s, String r, String mods, Color color) {
+    private JComponent makeEnv( String a, String d, String s, String r, String mods) {
         VBox container = new VBox();
-        JComponent c = new Category(this, title, color);
-        container.add(c);
         HBox envDials = new HBox();
         addDialByKey(envDials, a, "Attack");
         addDialByKey(envDials, d, "Decay");
@@ -149,119 +147,165 @@ public class BehringerUBXa extends Synth {
         return container;
     }
 
+    private JComponent categoryContainer(String title, Color color){
+        VBox v = new VBox();
+        Category c = new Category(this,title,color);
+        v.add(c);
+
+        return v;
+    }
+
     public BehringerUBXa() {
         assert checkboxGroups.length % NUM_PARAMS_CHECKBOXES == 0;
         assert dials.length % NUM_PARAMS_DIALS == 0;
         assert selectors.length % NUM_PARAMS_SELECTORS == 0;
 
         JComponent main = new SynthPanel(this);
-        JComponent vboxLeft = new VBox();
 
-        Category c = new Category(this,"Behringer UB-Xa",Color.WHITE);
-        vboxLeft.add(c);
-        HBox controls = new HBox();
-        vboxLeft.add(controls);
-        addDialByKey(controls,"ControlPortamentoAmount","Portamento Amount");
-        addDialByKey(controls,"ControlUnison","Unison"); // would be nice with a button
-        addDialByKey(controls,"ControlDetune","Detune");
+        VBox m = new VBox();
+        HBox row1 = new HBox();
+        m.add(row1);
+        JComponent controlCat = categoryContainer("Behringer UB-Xa",Color.WHITE);
+        row1.add(controlCat);
+        JComponent arpCat = categoryContainer("Arpeggiator", Style.COLOR_C());
+        row1.add(arpCat);
 
-        c = new Category(this,"Arpeggiator", Style.COLOR_A());
-        vboxLeft.add(c);
-        HBox arpDials = new HBox();
-        vboxLeft.add(arpDials);
-        addDialByKey(arpDials,"ArpeggiatorEnabled","Enabled"); //button?
-        addDialByKey(arpDials,"ArpeggiatorHold","Hold"); //button?
-        addDialByKey(arpDials,"ArpeggiatorGatetime","Gate Time");
-        addDialByKey(arpDials,"ArpeggiatorOctave","Octave");
-        addDialByKey(arpDials,"ArpeggiatorSwing","Swing");
-        addDialByKey(arpDials,"ArpeggiatorRepeat","Repeat");
+        HBox row2 = new HBox();
+        m.add(row2);
+        JComponent oscCat = categoryContainer("Oscillators", Style.COLOR_A());
+        row2.add(oscCat);
+        JComponent filterCat = categoryContainer("Filter", Style.COLOR_B());
+        row2.add(filterCat);
 
-        HBox arpChoosers = new HBox();
-        addChooserByKey(arpChoosers,"ArpeggiatorMode","Mode");
-        addChooserByKey(arpChoosers,"ArpeggiatorTime","Time");
-        addChooserByKey(arpChoosers,"ArpeggiatorSync","Sync");
-        vboxLeft.add(arpChoosers);
+        HBox row3 = new HBox();
+        m.add(row3);
+        JComponent loudnessEnv = categoryContainer("Loudness Envelope", Style.COLOR_A());
+        row3.add(loudnessEnv);
+        JComponent filterEnv = categoryContainer("Filter Envelope", Style.COLOR_B());
+        row3.add(filterEnv);
 
-        c = new Category(this, "Modulation", Style.COLOR_C());
-        vboxLeft.add(c);
-        HBox modDials = new HBox();
-        vboxLeft.add(modDials);
-        addDialByKey(modDials, "ModulationLFOTrigPoint", "LFOTrigPoint");
-        addDialByKey(modDials, "ModulationLFORate", "LFORate");
-        addDialByKey(modDials, "ModulationLFOPhase", "LFOPhase");
-        addDialByKey(modDials, "ModulationChannel1Amount", "Channel1Amount");
-        addDialByKey(modDials, "ModulationChannel2Amount", "Channel2Amount");
-        addDialByKey(modDials, "ModulationLFOTrim", "LFOTrim");
-        HBox h = new HBox();
-        VBox modSelsC1 = new VBox();
-        h.add(modSelsC1);
-        addCheckboxGroupByKey(modSelsC1, "ModulationChannel1Sends");
-        addCheckboxGroupByKey(modSelsC1, "ModulationChannel1Mods");
-        VBox modSelsC2 = new VBox();
-        h.add(modSelsC2);
-        addCheckboxGroupByKey(modSelsC2, "ModulationChannel2Sends");
-        addCheckboxGroupByKey(modSelsC2, "ModulationChannel2Mods");
-        vboxLeft.add(h);
+        HBox row4 = new HBox();
+        m.add(row4);
+        JComponent modCat = categoryContainer("Modulation", Style.COLOR_C());
+        row4.add(modCat);
+//
+//        JComponent vboxLeft = new VBox();
+//
+//        Category c = new Category(this,"Behringer UB-Xa",Color.WHITE);
+//        vboxLeft.add(c);
+//        HBox controls = new HBox();
+//        vboxLeft.add(controls);
+//        addDialByKey(controls,"ControlPortamentoAmount","Portamento Amount");
+//        addDialByKey(controls,"ControlUnison","Unison"); // would be nice with a button
+//        addDialByKey(controls,"ControlDetune","Detune");
+//
+//        c = new Category(this,"Arpeggiator", Style.COLOR_C());
+//        vboxLeft.add(c);
+//        HBox arpDials = new HBox();
+//        vboxLeft.add(arpDials);
+//        addDialByKey(arpDials,"ArpeggiatorEnabled","Enabled"); //button?
+//        addDialByKey(arpDials,"ArpeggiatorHold","Hold"); //button?
+//        addDialByKey(arpDials,"ArpeggiatorGatetime","Gate Time");
+//        addDialByKey(arpDials,"ArpeggiatorOctave","Octave");
+//        addDialByKey(arpDials,"ArpeggiatorSwing","Swing");
+//        addDialByKey(arpDials,"ArpeggiatorRepeat","Repeat");
+//
+//        HBox arpChoosers = new HBox();
+//        addChooserByKey(arpChoosers,"ArpeggiatorMode","Mode");
+//        addChooserByKey(arpChoosers,"ArpeggiatorTime","Time");
+//        addChooserByKey(arpChoosers,"ArpeggiatorSync","Sync");
+//        vboxLeft.add(arpChoosers);
+//
+//
+//
+//        HBox modShapes = new HBox();
+//        vboxLeft.add(modShapes);
+//        addChooserByKey(modShapes, "ModulationLFOShapes", "LFO Shapes");
+//
+//        HBox modMisc = new HBox();
+//        vboxLeft.add(modMisc);
+//        addCheckboxGroupByKey(modMisc, "ModulationLFOMods");
+//        HBox modQuirks = new HBox();
+//        addCheckboxGroupByKey(modQuirks, "ModulationQuirks");
+//        vboxLeft.add(modQuirks);
+//
+//        VBox vboxRight = new VBox();
+//        c = new Category(this, "Oscillators", Style.COLOR_A());
+//        vboxRight.add(c);
+//
+//        HBox oscDials = new HBox();
+//        addDialByKey(oscDials, "OscillatorsOSC1Transpose", "OSC1 Transpose");
+//        addDialByKey(oscDials, "OscillatorsOSC1PWAmount", "OSC1 PW Amount");
+//        addDialByKey(oscDials, "OscillatorsOSC2Transpose", "OSC2 Transpose");
+//        addDialByKey(oscDials, "OscillatorsOSC2PWAmount", "OSC2 PW Amount");
+//        vboxRight.add(oscDials);
+//
+//        HBox h2 = new HBox();
+//        VBox oscButtons = new VBox();
+//        addChooserByKey(oscButtons, "OscillatorsOSC1Shapes", "OSC1 Shapes");
+//        addCheckboxGroupByKey(oscButtons, "OscillatorsMode");
+//        addChooserByKey(oscButtons, "OscillatorsOSC2Shapes", "OSC2 Shapes");
+//        h2.add(oscButtons);
+//
+//        VBox oscillatorEnableButtons = new VBox();
+//        addCheckboxGroupByKey(oscillatorEnableButtons, "OscillatorsOSC1State");
+//        addChooserByKey(oscillatorEnableButtons, "OscillatorsOSC2State", "OSC2 State");
+//        h2.add(oscillatorEnableButtons);
+//
+//        vboxRight.add(h2);
+//
+//        c = new Category(this, "Filter", Style.COLOR_B());
+//        vboxRight.add(c);
+//
+//        HBox filterDials = new HBox();
+//        addDialByKey(filterDials, "FilterFrequency", "Frequency");
+//        addDialByKey(filterDials, "FilterResonance", "Resonance");
+//        addDialByKey(filterDials, "FilterModulation", "Modulation");
+//        addDialByKey(filterDials, "FilterNoise", "Noise");
+//        vboxRight.add(filterDials);
+//        HBox h3 = new HBox();
+//        vboxRight.add(h3);
+//        addCheckboxGroupByKey(h3, "FilterModes");
+//        JComponent filterEnv = makeEnv("Filter Envelope", "EnvelopesFilterA", "EnvelopesFilterD", "EnvelopesFilterS", "EnvelopesFilterR","EnvelopesFilterMods",Style.COLOR_B());
+//        vboxRight.add(filterEnv);
+//
+//        JComponent loudnessEnv = makeEnv("Loudness Envelope", "EnvelopesLoudnessA", "EnvelopesLoudnessD", "EnvelopesLoudnessS", "EnvelopesLoudnessR","EnvelopesLoudnessMods",Style.COLOR_A());
+//        vboxRight.add(loudnessEnv);
+//
+//        HBox mainUp = new HBox();
+//        mainUp.add(vboxLeft);
+//        mainUp.add(vboxRight);
+//
+//        HBox mainDown = new HBox();
+//        VBox mainDownV = new VBox();
+//        mainDown.add(mainDownV);
+//        c = new Category(this, "Modulation", Style.COLOR_C());
+//        mainDownV.add(c);
+//        HBox modDials = new HBox();
+//        mainDownV.add(modDials);
+//        addDialByKey(modDials, "ModulationLFOTrigPoint", "LFOTrigPoint");
+//        addDialByKey(modDials, "ModulationLFORate", "LFORate");
+//        addDialByKey(modDials, "ModulationLFOPhase", "LFOPhase");
+//        addDialByKey(modDials, "ModulationChannel1Amount", "Channel1Amount");
+//        addDialByKey(modDials, "ModulationChannel2Amount", "Channel2Amount");
+//        addDialByKey(modDials, "ModulationLFOTrim", "LFOTrim");
+//        HBox h = new HBox();
+//        VBox modSelsC1 = new VBox();
+//        h.add(modSelsC1);
+//        addCheckboxGroupByKey(modSelsC1, "ModulationChannel1Sends");
+//        addCheckboxGroupByKey(modSelsC1, "ModulationChannel1Mods");
+//        VBox modSelsC2 = new VBox();
+//        h.add(modSelsC2);
+//        addCheckboxGroupByKey(modSelsC2, "ModulationChannel2Sends");
+//        addCheckboxGroupByKey(modSelsC2, "ModulationChannel2Mods");
+//        mainDownV.add(h);
+//
+//
+//        VBox mainV = new VBox();
+//        mainV.add(mainUp);
+//        mainV.add(mainDown);
 
-        HBox modShapes = new HBox();
-        vboxLeft.add(modShapes);
-        addChooserByKey(modShapes, "ModulationLFOShapes", "LFO Shapes");
-
-        HBox modMisc = new HBox();
-        vboxLeft.add(modMisc);
-        addCheckboxGroupByKey(modMisc, "ModulationLFOMods");
-        HBox modQuirks = new HBox();
-        addCheckboxGroupByKey(modQuirks, "ModulationQuirks");
-        vboxLeft.add(modQuirks);
-
-        VBox vboxRight = new VBox();
-        c = new Category(this, "Oscillators", Style.COLOR_A());
-        vboxRight.add(c);
-
-        HBox oscDials = new HBox();
-        addDialByKey(oscDials, "OscillatorsOSC1Transpose", "OSC1 Transpose");
-        addDialByKey(oscDials, "OscillatorsOSC1PWAmount", "OSC1 PW Amount");
-        addDialByKey(oscDials, "OscillatorsOSC2Transpose", "OSC2 Transpose");
-        addDialByKey(oscDials, "OscillatorsOSC2PWAmount", "OSC2 PW Amount");
-        vboxRight.add(oscDials);
-
-        HBox h2 = new HBox();
-        VBox oscButtons = new VBox();
-        addChooserByKey(oscButtons, "OscillatorsOSC1Shapes", "OSC1 Shapes");
-        addCheckboxGroupByKey(oscButtons, "OscillatorsMode");
-        addChooserByKey(oscButtons, "OscillatorsOSC2Shapes", "OSC2 Shapes");
-        h2.add(oscButtons);
-
-        VBox oscillatorEnableButtons = new VBox();
-        addCheckboxGroupByKey(oscillatorEnableButtons, "OscillatorsOSC1State");
-        addChooserByKey(oscillatorEnableButtons, "OscillatorsOSC2State", "OSC2 State");
-        h2.add(oscillatorEnableButtons);
-
-        vboxRight.add(h2);
-
-        c = new Category(this, "Filter", Style.COLOR_B());
-        vboxRight.add(c);
-
-        HBox filterDials = new HBox();
-        addDialByKey(filterDials, "FilterFrequency", "Frequency");
-        addDialByKey(filterDials, "FilterResonance", "Resonance");
-        addDialByKey(filterDials, "FilterModulation", "Modulation");
-        addDialByKey(filterDials, "FilterNoise", "Noise");
-        vboxRight.add(filterDials);
-        HBox h3 = new HBox();
-        vboxRight.add(h3);
-        addCheckboxGroupByKey(h3, "FilterModes");
-        JComponent filterEnv = makeEnv("Filter Envelope", "EnvelopesFilterA", "EnvelopesFilterD", "EnvelopesFilterS", "EnvelopesFilterR","EnvelopesFilterMods",Style.COLOR_B());
-        vboxRight.add(filterEnv);
-
-        JComponent loudnessEnv = makeEnv("Loudness Envelope", "EnvelopesLoudnessA", "EnvelopesLoudnessD", "EnvelopesLoudnessS", "EnvelopesLoudnessR","EnvelopesLoudnessMods",Style.COLOR_C());
-        vboxRight.add(loudnessEnv);
-
-        HBox mainH = new HBox();
-        mainH.add(vboxLeft);
-        mainH.add(vboxRight);
-
-        main.add(mainH, BorderLayout.CENTER);
+        main.add(m, BorderLayout.CENTER);
         addTab("Main", main);
 
         for (String ctrlGrp : ctrlGroups) {
