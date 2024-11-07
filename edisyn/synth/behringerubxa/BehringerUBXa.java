@@ -147,12 +147,15 @@ public class BehringerUBXa extends Synth {
         return container;
     }
 
-    private JComponent categoryContainer(String title, Color color){
+    private JComponent categoryContainer(JComponent parent, String title, Color color){
         VBox v = new VBox();
+        parent.add(v);
         Category c = new Category(this,title,color);
         v.add(c);
 
-        return v;
+        HBox h = new HBox();
+        v.add(h);
+        return h;
     }
 
     public BehringerUBXa() {
@@ -165,28 +168,48 @@ public class BehringerUBXa extends Synth {
         VBox m = new VBox();
         HBox row1 = new HBox();
         m.add(row1);
-        JComponent controlCat = categoryContainer("Behringer UB-Xa",Color.WHITE);
-        row1.add(controlCat);
-        JComponent arpCat = categoryContainer("Arpeggiator", Style.COLOR_C());
-        row1.add(arpCat);
+        JComponent controlCat = categoryContainer(row1,"Behringer UB-Xa",Color.WHITE);
+
+        addDialByKey(controlCat,"ControlPortamentoAmount","Portamento Amount");
+        addDialByKey(controlCat,"ControlUnison","Unison"); // would be nice with a button
+        addDialByKey(controlCat,"ControlDetune","Detune");
+
+        JComponent arpCat = categoryContainer(row1,"Arpeggiator", Style.COLOR_C());
+        VBox arpChoosers = new VBox();
+        addChooserByKey(arpChoosers,"ArpeggiatorMode","Mode");
+        addChooserByKey(arpChoosers,"ArpeggiatorTime","Time");
+        addChooserByKey(arpChoosers,"ArpeggiatorSync","Sync");
+        arpCat.add(arpChoosers);
+
+        HBox arpDials = new HBox();
+        arpCat.add(arpDials);
+        addDialByKey(arpDials,"ArpeggiatorEnabled","Enabled"); //button?
+        addDialByKey(arpDials,"ArpeggiatorHold","Hold"); //button?
+        addDialByKey(arpDials,"ArpeggiatorGatetime","Gate Time");
+        addDialByKey(arpDials,"ArpeggiatorOctave","Octave");
+        addDialByKey(arpDials,"ArpeggiatorSwing","Swing");
+        addDialByKey(arpDials,"ArpeggiatorRepeat","Repeat");
+
+
 
         HBox row2 = new HBox();
         m.add(row2);
-        JComponent oscCat = categoryContainer("Oscillators", Style.COLOR_A());
-        row2.add(oscCat);
-        JComponent filterCat = categoryContainer("Filter", Style.COLOR_B());
-        row2.add(filterCat);
+        JComponent oscCat = categoryContainer(row2,"Oscillators", Style.COLOR_A());
+        JComponent filterCat = categoryContainer(row2,"Filter", Style.COLOR_B());
 
         HBox row3 = new HBox();
         m.add(row3);
-        JComponent loudnessEnv = categoryContainer("Loudness Envelope", Style.COLOR_A());
+        JComponent loudnessEnv = categoryContainer(row3,"Loudness Envelope", Style.COLOR_A());
         row3.add(loudnessEnv);
-        JComponent filterEnv = categoryContainer("Filter Envelope", Style.COLOR_B());
+        JComponent filterEnv = categoryContainer(row3,"Filter Envelope", Style.COLOR_B());
         row3.add(filterEnv);
 
         HBox row4 = new HBox();
         m.add(row4);
-        JComponent modCat = categoryContainer("Modulation", Style.COLOR_C());
+        JComponent modCat = categoryContainer(row4,"Modulation", Style.COLOR_C());
+
+
+
         row4.add(modCat);
 //
 //        JComponent vboxLeft = new VBox();
