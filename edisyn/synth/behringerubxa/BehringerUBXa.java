@@ -195,23 +195,72 @@ public class BehringerUBXa extends Synth {
         HBox row2 = new HBox();
         m.add(row2);
         JComponent oscCat = categoryContainer(row2,"Oscillators", Style.COLOR_A());
+        HBox oscDials = new HBox();
+        addDialByKey(oscDials, "OscillatorsOSC1Transpose", "OSC1 Transpose");
+        addDialByKey(oscDials, "OscillatorsOSC1PWAmount", "OSC1 PW Amount");
+        addDialByKey(oscDials, "OscillatorsOSC2Transpose", "OSC2 Transpose");
+        addDialByKey(oscDials, "OscillatorsOSC2PWAmount", "OSC2 PW Amount");
+        oscCat.add(oscDials);
+
+        HBox h2 = new HBox();
+        VBox oscButtons = new VBox();
+        addChooserByKey(oscButtons, "OscillatorsOSC1Shapes", "OSC1 Shapes");
+        addCheckboxGroupByKey(oscButtons, "OscillatorsMode");
+        addChooserByKey(oscButtons, "OscillatorsOSC2Shapes", "OSC2 Shapes");
+        h2.add(oscButtons);
+
+        VBox oscillatorEnableButtons = new VBox();
+        addCheckboxGroupByKey(oscillatorEnableButtons, "OscillatorsOSC1State");
+        addChooserByKey(oscillatorEnableButtons, "OscillatorsOSC2State", "OSC2 State");
+        h2.add(oscillatorEnableButtons);
+
+        oscCat.add(h2);
+
+
+
         JComponent filterCat = categoryContainer(row2,"Filter", Style.COLOR_B());
+        HBox filterDials = new HBox();
+        addDialByKey(filterDials, "FilterFrequency", "Frequency");
+        addDialByKey(filterDials, "FilterResonance", "Resonance");
+        addDialByKey(filterDials, "FilterModulation", "Modulation");
+        addDialByKey(filterDials, "FilterNoise", "Noise");
+        filterCat.add(filterDials);
+        HBox h3 = new HBox();
+        filterCat.add(h3);
+        addCheckboxGroupByKey(h3, "FilterModes");
 
         HBox row3 = new HBox();
         m.add(row3);
-        JComponent loudnessEnv = categoryContainer(row3,"Loudness Envelope", Style.COLOR_A());
-        row3.add(loudnessEnv);
-        JComponent filterEnv = categoryContainer(row3,"Filter Envelope", Style.COLOR_B());
-        row3.add(filterEnv);
+        JComponent loudnessEnvCat = categoryContainer(row3,"Loudness Envelope", Style.COLOR_A());
+        JComponent loudnessEnv = makeEnv( "EnvelopesLoudnessA", "EnvelopesLoudnessD", "EnvelopesLoudnessS", "EnvelopesLoudnessR","EnvelopesLoudnessMods");
+        loudnessEnvCat.add(loudnessEnv);
+
+        JComponent filterEnvCat = categoryContainer(row3,"Filter Envelope", Style.COLOR_B());
+        JComponent filterEnv = makeEnv( "EnvelopesFilterA", "EnvelopesFilterD", "EnvelopesFilterS", "EnvelopesFilterR","EnvelopesFilterMods");
+        filterEnvCat.add(filterEnv);
 
         HBox row4 = new HBox();
         m.add(row4);
         JComponent modCat = categoryContainer(row4,"Modulation", Style.COLOR_C());
+        HBox modDials = new HBox();
+        modCat.add(modDials);
+        addDialByKey(modDials, "ModulationLFOTrigPoint", "LFOTrigPoint");
+        addDialByKey(modDials, "ModulationLFORate", "LFORate");
+        addDialByKey(modDials, "ModulationLFOPhase", "LFOPhase");
+        addDialByKey(modDials, "ModulationChannel1Amount", "Channel1Amount");
+        addDialByKey(modDials, "ModulationChannel2Amount", "Channel2Amount");
+        addDialByKey(modDials, "ModulationLFOTrim", "LFOTrim");
+        HBox h = new HBox();
+        VBox modSelsC1 = new VBox();
+        h.add(modSelsC1);
+        addCheckboxGroupByKey(modSelsC1, "ModulationChannel1Sends");
+        addCheckboxGroupByKey(modSelsC1, "ModulationChannel1Mods");
+        VBox modSelsC2 = new VBox();
+        h.add(modSelsC2);
+        addCheckboxGroupByKey(modSelsC2, "ModulationChannel2Sends");
+        addCheckboxGroupByKey(modSelsC2, "ModulationChannel2Mods");
+        modCat.add(h);
 
-
-
-        row4.add(modCat);
-//
 //        JComponent vboxLeft = new VBox();
 //
 //        Category c = new Category(this,"Behringer UB-Xa",Color.WHITE);
@@ -256,26 +305,7 @@ public class BehringerUBXa extends Synth {
 //        c = new Category(this, "Oscillators", Style.COLOR_A());
 //        vboxRight.add(c);
 //
-//        HBox oscDials = new HBox();
-//        addDialByKey(oscDials, "OscillatorsOSC1Transpose", "OSC1 Transpose");
-//        addDialByKey(oscDials, "OscillatorsOSC1PWAmount", "OSC1 PW Amount");
-//        addDialByKey(oscDials, "OscillatorsOSC2Transpose", "OSC2 Transpose");
-//        addDialByKey(oscDials, "OscillatorsOSC2PWAmount", "OSC2 PW Amount");
-//        vboxRight.add(oscDials);
-//
-//        HBox h2 = new HBox();
-//        VBox oscButtons = new VBox();
-//        addChooserByKey(oscButtons, "OscillatorsOSC1Shapes", "OSC1 Shapes");
-//        addCheckboxGroupByKey(oscButtons, "OscillatorsMode");
-//        addChooserByKey(oscButtons, "OscillatorsOSC2Shapes", "OSC2 Shapes");
-//        h2.add(oscButtons);
-//
-//        VBox oscillatorEnableButtons = new VBox();
-//        addCheckboxGroupByKey(oscillatorEnableButtons, "OscillatorsOSC1State");
-//        addChooserByKey(oscillatorEnableButtons, "OscillatorsOSC2State", "OSC2 State");
-//        h2.add(oscillatorEnableButtons);
-//
-//        vboxRight.add(h2);
+
 //
 //        c = new Category(this, "Filter", Style.COLOR_B());
 //        vboxRight.add(c);
