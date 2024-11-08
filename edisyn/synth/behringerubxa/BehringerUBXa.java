@@ -197,6 +197,20 @@ public class BehringerUBXa extends Synth {
             HBox row2 = new HBox();
             mainVbox.add(row2);
             JComponent oscCat = categoryContainer(row2, "Oscillators", Style.COLOR_A());
+
+            VBox osc1v = new VBox();
+            oscCat.add(osc1v);
+
+            addChooserByKey(osc1v, "OscillatorsOSC1Shapes", "OSC1 Shapes");
+            addCheckboxGroupByKey(osc1v, "OscillatorsOSC1State");
+
+            VBox osc2v = new VBox();
+            oscCat.add(osc2v);
+            addChooserByKey(osc2v, "OscillatorsOSC2Shapes", "OSC2 Shapes");
+            addChooserByKey(osc2v, "OscillatorsOSC2State", "OSC2 State");
+            addCheckboxGroupByKey(osc2v, "OscillatorsMode");
+
+
             HBox oscDials = new HBox();
             addDialByKey(oscDials, "OscillatorsOSC1Transpose", "OSC1 Transpose");
             addDialByKey(oscDials, "OscillatorsOSC1PWAmount", "OSC1 PW Amount");
@@ -204,31 +218,16 @@ public class BehringerUBXa extends Synth {
             addDialByKey(oscDials, "OscillatorsOSC2PWAmount", "OSC2 PW Amount");
             oscCat.add(oscDials);
 
-            HBox h2 = new HBox();
-            VBox oscButtons = new VBox();
-            addChooserByKey(oscButtons, "OscillatorsOSC1Shapes", "OSC1 Shapes");
-            addCheckboxGroupByKey(oscButtons, "OscillatorsMode");
-            addChooserByKey(oscButtons, "OscillatorsOSC2Shapes", "OSC2 Shapes");
-            h2.add(oscButtons);
-
-            VBox oscillatorEnableButtons = new VBox();
-            addCheckboxGroupByKey(oscillatorEnableButtons, "OscillatorsOSC1State");
-            addChooserByKey(oscillatorEnableButtons, "OscillatorsOSC2State", "OSC2 State");
-            h2.add(oscillatorEnableButtons);
-
-            oscCat.add(h2);
-
-
             JComponent filterCat = categoryContainer(row2, "Filter", Style.COLOR_B());
+            VBox filterV = new VBox();
+            filterCat.add(filterV);
+            addCheckboxGroupByKey(filterV, "FilterModes");
             HBox filterDials = new HBox();
             addDialByKey(filterDials, "FilterFrequency", "Frequency");
             addDialByKey(filterDials, "FilterResonance", "Resonance");
             addDialByKey(filterDials, "FilterModulation", "Modulation");
             addDialByKey(filterDials, "FilterNoise", "Noise");
-            filterCat.add(filterDials);
-            HBox h3 = new HBox();
-            filterCat.add(h3);
-            addCheckboxGroupByKey(h3, "FilterModes");
+            filterV.add(filterDials);
         }
 
         {
