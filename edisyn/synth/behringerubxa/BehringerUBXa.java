@@ -32,20 +32,20 @@ public class BehringerUBXa extends Synth {
 
     public static String[] splitAtCapitalLetter(String input, int k) {
         java.util.List<String> out = new ArrayList<>();
-        StringBuilder s = new StringBuilder(input.substring(0,1));
-        for (int i=1; i< input.length(); i++) {
+        StringBuilder s = new StringBuilder(input.substring(0, 1));
+        for (int i = 1; i < input.length(); i++) {
             if (Character.isUpperCase(input.charAt(i))
                     && i != input.length() - 1
                     && !Character.isUpperCase(input.charAt(i + 1))
-            && Character.isLetter(input.charAt(i+1))) {
+                    && Character.isLetter(input.charAt(i + 1))) {
                 out.add(s.toString());
-                s=new StringBuilder(input.substring(i,i+1));
+                s = new StringBuilder(input.substring(i, i + 1));
             } else {
                 s.append(input.charAt(i));
             }
         }
         out.add(s.toString());
-        return  out.toArray(new String[0]);
+        return out.toArray(new String[0]);
     }
 
     public static String[] splitAtCapitalLetter_(String input, int k) {
@@ -122,7 +122,7 @@ public class BehringerUBXa extends Synth {
 
     }
 
-    private JComponent makeEnv( String a, String d, String s, String r, String mods) {
+    private JComponent makeEnv(String a, String d, String s, String r, String mods) {
         VBox container = new VBox();
         HBox envDials = new HBox();
         addDialByKey(envDials, a, "Attack");
@@ -147,10 +147,10 @@ public class BehringerUBXa extends Synth {
         return container;
     }
 
-    private JComponent categoryContainer(JComponent parent, String title, Color color){
+    private JComponent categoryContainer(JComponent parent, String title, Color color) {
         VBox v = new VBox();
         parent.add(v);
-        Category c = new Category(this,title,color);
+        Category c = new Category(this, title, color);
         v.add(c);
 
         HBox h = new HBox();
@@ -165,109 +165,111 @@ public class BehringerUBXa extends Synth {
 
         JComponent main = new SynthPanel(this);
 
-        VBox m = new VBox();
-        HBox row1 = new HBox();
-        m.add(row1);
-        JComponent controlCat = categoryContainer(row1,"Behringer UB-Xa",Color.WHITE);
+        VBox mainVbox = new VBox();
+        main.add(mainVbox, BorderLayout.CENTER);
+        {
+            HBox row1 = new HBox();
+            mainVbox.add(row1);
+            JComponent controlCat = categoryContainer(row1, "Behringer UB-Xa", Color.WHITE);
 
-        addDialByKey(controlCat,"ControlPortamentoAmount","Portamento Amount");
-        addDialByKey(controlCat,"ControlUnison","Unison"); // would be nice with a button
-        addDialByKey(controlCat,"ControlDetune","Detune");
+            addDialByKey(controlCat, "ControlPortamentoAmount", "Portamento Amount");
+            addDialByKey(controlCat, "ControlUnison", "Unison"); // would be nice with a button
+            addDialByKey(controlCat, "ControlDetune", "Detune");
 
-        JComponent arpCat = categoryContainer(row1,"Arpeggiator", Style.COLOR_C());
-        VBox arpChoosers = new VBox();
-        addChooserByKey(arpChoosers,"ArpeggiatorMode","Mode");
-        addChooserByKey(arpChoosers,"ArpeggiatorTime","Time");
-        addChooserByKey(arpChoosers,"ArpeggiatorSync","Sync");
-        arpCat.add(arpChoosers);
+            JComponent arpCat = categoryContainer(row1, "Arpeggiator", Style.COLOR_C());
+            VBox arpChoosers = new VBox();
+            addChooserByKey(arpChoosers, "ArpeggiatorMode", "Mode");
+            addChooserByKey(arpChoosers, "ArpeggiatorTime", "Time");
+            addChooserByKey(arpChoosers, "ArpeggiatorSync", "Sync");
+            arpCat.add(arpChoosers);
 
-        HBox arpDials = new HBox();
-        arpCat.add(arpDials);
-        addDialByKey(arpDials,"ArpeggiatorEnabled","Enabled"); //button?
-        addDialByKey(arpDials,"ArpeggiatorHold","Hold"); //button?
-        addDialByKey(arpDials,"ArpeggiatorGatetime","Gate Time");
-        addDialByKey(arpDials,"ArpeggiatorOctave","Octave");
-        addDialByKey(arpDials,"ArpeggiatorSwing","Swing");
-        addDialByKey(arpDials,"ArpeggiatorRepeat","Repeat");
+            HBox arpDials = new HBox();
+            arpCat.add(arpDials);
+            addDialByKey(arpDials, "ArpeggiatorEnabled", "Enabled"); //button?
+            addDialByKey(arpDials, "ArpeggiatorHold", "Hold"); //button?
+            addDialByKey(arpDials, "ArpeggiatorGatetime", "Gate Time");
+            addDialByKey(arpDials, "ArpeggiatorOctave", "Octave");
+            addDialByKey(arpDials, "ArpeggiatorSwing", "Swing");
+            addDialByKey(arpDials, "ArpeggiatorRepeat", "Repeat");
+
+        }
+        {
+            HBox row2 = new HBox();
+            mainVbox.add(row2);
+            JComponent oscCat = categoryContainer(row2, "Oscillators", Style.COLOR_A());
+            HBox oscDials = new HBox();
+            addDialByKey(oscDials, "OscillatorsOSC1Transpose", "OSC1 Transpose");
+            addDialByKey(oscDials, "OscillatorsOSC1PWAmount", "OSC1 PW Amount");
+            addDialByKey(oscDials, "OscillatorsOSC2Transpose", "OSC2 Transpose");
+            addDialByKey(oscDials, "OscillatorsOSC2PWAmount", "OSC2 PW Amount");
+            oscCat.add(oscDials);
+
+            HBox h2 = new HBox();
+            VBox oscButtons = new VBox();
+            addChooserByKey(oscButtons, "OscillatorsOSC1Shapes", "OSC1 Shapes");
+            addCheckboxGroupByKey(oscButtons, "OscillatorsMode");
+            addChooserByKey(oscButtons, "OscillatorsOSC2Shapes", "OSC2 Shapes");
+            h2.add(oscButtons);
+
+            VBox oscillatorEnableButtons = new VBox();
+            addCheckboxGroupByKey(oscillatorEnableButtons, "OscillatorsOSC1State");
+            addChooserByKey(oscillatorEnableButtons, "OscillatorsOSC2State", "OSC2 State");
+            h2.add(oscillatorEnableButtons);
+
+            oscCat.add(h2);
 
 
+            JComponent filterCat = categoryContainer(row2, "Filter", Style.COLOR_B());
+            HBox filterDials = new HBox();
+            addDialByKey(filterDials, "FilterFrequency", "Frequency");
+            addDialByKey(filterDials, "FilterResonance", "Resonance");
+            addDialByKey(filterDials, "FilterModulation", "Modulation");
+            addDialByKey(filterDials, "FilterNoise", "Noise");
+            filterCat.add(filterDials);
+            HBox h3 = new HBox();
+            filterCat.add(h3);
+            addCheckboxGroupByKey(h3, "FilterModes");
+        }
 
-        HBox row2 = new HBox();
-        m.add(row2);
-        JComponent oscCat = categoryContainer(row2,"Oscillators", Style.COLOR_A());
-        HBox oscDials = new HBox();
-        addDialByKey(oscDials, "OscillatorsOSC1Transpose", "OSC1 Transpose");
-        addDialByKey(oscDials, "OscillatorsOSC1PWAmount", "OSC1 PW Amount");
-        addDialByKey(oscDials, "OscillatorsOSC2Transpose", "OSC2 Transpose");
-        addDialByKey(oscDials, "OscillatorsOSC2PWAmount", "OSC2 PW Amount");
-        oscCat.add(oscDials);
+        {
+            HBox row3 = new HBox();
+            mainVbox.add(row3);
+            JComponent loudnessEnvCat = categoryContainer(row3, "Loudness Envelope", Style.COLOR_A());
+            JComponent loudnessEnv = makeEnv("EnvelopesLoudnessA", "EnvelopesLoudnessD", "EnvelopesLoudnessS", "EnvelopesLoudnessR", "EnvelopesLoudnessMods");
+            loudnessEnvCat.add(loudnessEnv);
 
-        HBox h2 = new HBox();
-        VBox oscButtons = new VBox();
-        addChooserByKey(oscButtons, "OscillatorsOSC1Shapes", "OSC1 Shapes");
-        addCheckboxGroupByKey(oscButtons, "OscillatorsMode");
-        addChooserByKey(oscButtons, "OscillatorsOSC2Shapes", "OSC2 Shapes");
-        h2.add(oscButtons);
+            JComponent filterEnvCat = categoryContainer(row3, "Filter Envelope", Style.COLOR_B());
+            JComponent filterEnv = makeEnv("EnvelopesFilterA", "EnvelopesFilterD", "EnvelopesFilterS", "EnvelopesFilterR", "EnvelopesFilterMods");
+            filterEnvCat.add(filterEnv);
 
-        VBox oscillatorEnableButtons = new VBox();
-        addCheckboxGroupByKey(oscillatorEnableButtons, "OscillatorsOSC1State");
-        addChooserByKey(oscillatorEnableButtons, "OscillatorsOSC2State", "OSC2 State");
-        h2.add(oscillatorEnableButtons);
-
-        oscCat.add(h2);
-
-
-
-        JComponent filterCat = categoryContainer(row2,"Filter", Style.COLOR_B());
-        HBox filterDials = new HBox();
-        addDialByKey(filterDials, "FilterFrequency", "Frequency");
-        addDialByKey(filterDials, "FilterResonance", "Resonance");
-        addDialByKey(filterDials, "FilterModulation", "Modulation");
-        addDialByKey(filterDials, "FilterNoise", "Noise");
-        filterCat.add(filterDials);
-        HBox h3 = new HBox();
-        filterCat.add(h3);
-        addCheckboxGroupByKey(h3, "FilterModes");
-
-        HBox row3 = new HBox();
-        m.add(row3);
-        JComponent loudnessEnvCat = categoryContainer(row3,"Loudness Envelope", Style.COLOR_A());
-        JComponent loudnessEnv = makeEnv( "EnvelopesLoudnessA", "EnvelopesLoudnessD", "EnvelopesLoudnessS", "EnvelopesLoudnessR","EnvelopesLoudnessMods");
-        loudnessEnvCat.add(loudnessEnv);
-
-        JComponent filterEnvCat = categoryContainer(row3,"Filter Envelope", Style.COLOR_B());
-        JComponent filterEnv = makeEnv( "EnvelopesFilterA", "EnvelopesFilterD", "EnvelopesFilterS", "EnvelopesFilterR","EnvelopesFilterMods");
-        filterEnvCat.add(filterEnv);
-
-        HBox row4 = new HBox();
-        m.add(row4);
-        JComponent modCat = categoryContainer(row4,"Modulation", Style.COLOR_C());
-        HBox modDials = new HBox();
-        modCat.add(modDials);
-        addDialByKey(modDials, "ModulationLFOTrigPoint", "LFOTrigPoint");
-        addDialByKey(modDials, "ModulationLFORate", "LFORate");
-        addDialByKey(modDials, "ModulationLFOPhase", "LFOPhase");
-        addDialByKey(modDials, "ModulationChannel1Amount", "Channel1Amount");
-        addDialByKey(modDials, "ModulationChannel2Amount", "Channel2Amount");
-        addDialByKey(modDials, "ModulationLFOTrim", "LFOTrim");
-        HBox h = new HBox();
-        VBox modSelsC1 = new VBox();
-        h.add(modSelsC1);
-        addCheckboxGroupByKey(modSelsC1, "ModulationChannel1Sends");
-        addCheckboxGroupByKey(modSelsC1, "ModulationChannel1Mods");
-        VBox modSelsC2 = new VBox();
-        h.add(modSelsC2);
-        addCheckboxGroupByKey(modSelsC2, "ModulationChannel2Sends");
-        addCheckboxGroupByKey(modSelsC2, "ModulationChannel2Mods");
-        modCat.add(h);
-
-        main.add(m, BorderLayout.CENTER);
+            HBox row4 = new HBox();
+            mainVbox.add(row4);
+            JComponent modCat = categoryContainer(row4, "Modulation", Style.COLOR_C());
+            HBox modDials = new HBox();
+            modCat.add(modDials);
+            addDialByKey(modDials, "ModulationLFOTrigPoint", "LFOTrigPoint");
+            addDialByKey(modDials, "ModulationLFORate", "LFORate");
+            addDialByKey(modDials, "ModulationLFOPhase", "LFOPhase");
+            addDialByKey(modDials, "ModulationChannel1Amount", "Channel1Amount");
+            addDialByKey(modDials, "ModulationChannel2Amount", "Channel2Amount");
+            addDialByKey(modDials, "ModulationLFOTrim", "LFOTrim");
+            HBox h = new HBox();
+            VBox modSelsC1 = new VBox();
+            h.add(modSelsC1);
+            addCheckboxGroupByKey(modSelsC1, "ModulationChannel1Sends");
+            addCheckboxGroupByKey(modSelsC1, "ModulationChannel1Mods");
+            VBox modSelsC2 = new VBox();
+            h.add(modSelsC2);
+            addCheckboxGroupByKey(modSelsC2, "ModulationChannel2Sends");
+            addCheckboxGroupByKey(modSelsC2, "ModulationChannel2Mods");
+            modCat.add(h);
+        }
         addTab("Main", main);
 
         for (String ctrlGrp : ctrlGroups) {
             JComponent p = new SynthPanel(this);
-            JComponent box =  makeGroupedControls(ctrlGrp);
-            p.add(box,BorderLayout.CENTER);
+            JComponent box = makeGroupedControls(ctrlGrp);
+            p.add(box, BorderLayout.CENTER);
             addTab(ctrlGrp, p);
         }
 
@@ -332,7 +334,7 @@ public class BehringerUBXa extends Synth {
                 return symmetric;
             }
         };
-        for (int i=1; i<labels.length; i++) {
+        for (int i = 1; i < labels.length; i++) {
             comp.addAdditionalLabel(labels[i]);
         }
 
@@ -406,7 +408,7 @@ public class BehringerUBXa extends Synth {
     private void addCheckboxGroup(JComponent container, String key, String[] lbls) {
         for (String lbl : lbls) {
             JComponent comp;
-            if (lbl.contains("~") ) {
+            if (lbl.contains("~")) {
                 String[] strs = lbl.split("~");
                 String prefix = longestCommonWordPrefix(strs[0], strs[1]);
                 String[] opts = new String[]{strs[1], strs[0]}; // order is "switched"
@@ -568,21 +570,20 @@ public class BehringerUBXa extends Synth {
     }
 
 
-    public byte[] requestCurrentDump()
-    {
+    public byte[] requestCurrentDump() {
         byte[] data = new byte[36];
 
-        data[10] = (byte)0x03; // Request
-        data[11] = (byte)0x7F;
-        System.arraycopy(SysExHeader,0,data,0,SysExHeader.length);
-        byte[] ext = generatePaddedByteArray("BIN ",4);
+        data[10] = (byte) 0x03; // Request
+        data[11] = (byte) 0x7F;
+        System.arraycopy(SysExHeader, 0, data, 0, SysExHeader.length);
+        byte[] ext = generatePaddedByteArray("BIN ", 4);
         System.arraycopy(ext, 0, data, 12, ext.length);
-        byte[] fileName = generatePaddedByteArray("Upper Patch",16);
+        byte[] fileName = generatePaddedByteArray("Upper Patch", 16);
         System.arraycopy(fileName, 0, data, 16, fileName.length);
-        data[32] = (byte)0x00;
-        data[33] = (byte)0x03;
-        data[34] = (byte)0x75;
-        data[35] = (byte)0xF7;
+        data[32] = (byte) 0x00;
+        data[33] = (byte) 0x03;
+        data[34] = (byte) 0x75;
+        data[35] = (byte) 0xF7;
         return data;
     }
 
@@ -592,7 +593,7 @@ public class BehringerUBXa extends Synth {
         for (int i = 0; i < byteArray.length; i++) {
             byte b = byteArray[i];
             // Convert each byte to hex and append to the string builder
-            if (i>=skip) {
+            if (i >= skip) {
                 hexString.append(String.format("%02d: %02X ", i, b));
             }
         }
@@ -601,20 +602,20 @@ public class BehringerUBXa extends Synth {
         return hexString.toString().trim();
     }
 
-    public boolean parsePatch(){
+    public boolean parsePatch() {
         int length = 0;
-        for(byte[] b : this.patchDump){
+        for (byte[] b : this.patchDump) {
             length += b.length;
         }
         byte[] data = new byte[length];
         int dstPos = 0;
-        for(byte[] b : this.patchDump){
+        for (byte[] b : this.patchDump) {
             System.arraycopy(b, 0, data, dstPos, b.length);
         }
-        for(int i = 0; i<SysExPosToKeyAndSize.length; i+=3){
-            int pos = (int)SysExPosToKeyAndSize[i];
-            String key = (String)SysExPosToKeyAndSize[i+1];
-            int size = (int)SysExPosToKeyAndSize[i+2];
+        for (int i = 0; i < SysExPosToKeyAndSize.length; i += 3) {
+            int pos = (int) SysExPosToKeyAndSize[i];
+            String key = (String) SysExPosToKeyAndSize[i + 1];
+            int size = (int) SysExPosToKeyAndSize[i + 2];
             // FIXME
             int val = data[pos];// + data[pos+1] << 2;
             int i1 = data[pos] + (data[pos + 1] << 1);
@@ -626,16 +627,15 @@ public class BehringerUBXa extends Synth {
     }
 
 
-
     static void verify7bitizedData(byte[] in) {
-        for (byte b: in){
-            assert(b & 0b10000000) == 0b00000000;
+        for (byte b : in) {
+            assert (b & 0b10000000) == 0b00000000;
         }
     }
 
-    static byte[] convertGrp(byte[] in){
+    static byte[] convertGrp(byte[] in) {
         assert in.length == 8; // todo - support remainder
-        int l = in.length-1;
+        int l = in.length - 1;
         byte[] out = new byte[l];
         out[0] = (byte) ((0b0100000 & in[0]) + (0b01111111 & in[1]));
         out[1] = (byte) ((0b0010000 & in[0]) + (0b01111111 & in[2]));
@@ -647,50 +647,50 @@ public class BehringerUBXa extends Synth {
         return out;
     }
 
-    static byte[] unpack7b(byte[] in){
+    static byte[] unpack7b(byte[] in) {
         int groups = in.length / 8;
         int remainder = in.length % 8;
-        assert remainder == 0:  "Remainder not yet supported";
+        assert remainder == 0 : "Remainder not yet supported";
         int add = remainder == 0 ? 0 : remainder - 1;
         byte[] out = new byte[groups * 7 + add];
         for (int g = 0; g < groups; g++) {
-            byte [] grp = new byte[8];
-            System.arraycopy(in, g*8, grp,0,8);
+            byte[] grp = new byte[8];
+            System.arraycopy(in, g * 8, grp, 0, 8);
             byte[] res = convertGrp(grp);
-            System.arraycopy(res, 0, out, g*7, 7);
+            System.arraycopy(res, 0, out, g * 7, 7);
         }
-        return out ;
+        return out;
     }
 
     @Override
     public int parse(byte[] data, boolean fromFile) {
-        if (data.length== EOF.length &&
-                BehringerUBXaRec.msgStartsWith(data,BehringerUBXaRec.EOF)
+        if (data.length == EOF.length &&
+                BehringerUBXaRec.msgStartsWith(data, BehringerUBXaRec.EOF)
         ) return parsePatch() ? PARSE_SUCCEEDED : PARSE_FAILED;
         int fileDumpMessageType = data[SysExHeader.length];
 
-        if (fileDumpMessageType == (byte)0x01){
+        if (fileDumpMessageType == (byte) 0x01) {
             // Clear on header
             patchDump.clear();
         } else {
-            assert fileDumpMessageType == (byte)0x02;
+            assert fileDumpMessageType == (byte) 0x02;
             int packetNum = data[11];
             assert packetNum == patchDump.size();
 
 
-            int packageLength = data[12]+1;
+            int packageLength = data[12] + 1;
             int offset = 13; // the extra
-            if (packetNum == 0){
+            if (packetNum == 0) {
 
 
-                byte[] encodedData = Arrays.copyOfRange(data, offset, offset +packageLength);
+                byte[] encodedData = Arrays.copyOfRange(data, offset, offset + packageLength);
                 verify7bitizedData(encodedData);
                 byte[] decodedData = unpack7b(encodedData);
 
                 // TODO - how to interpret the decoded data
 
             }
-            patchDump.add(Arrays.copyOfRange(data, offset, packageLength+offset));
+            patchDump.add(Arrays.copyOfRange(data, offset, packageLength + offset));
         }
         return PARSE_INCOMPLETE;
     }
