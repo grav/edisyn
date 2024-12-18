@@ -399,8 +399,10 @@ public class BehringerUBXa extends Synth {
     }
 
     private JComponent makeGroupedControls(String ctrlGrp) {
-        JComponent vbox = new VBox();
+        JComponent groupVbox = new VBox();
+        JComponent selDialHbox = new HBox();
         {
+            JComponent vbox = new VBox();
             JComponent hbox = null;
             int j = 0;
             for (int i = 0; i < selectors.length; i += NUM_PARAMS_SELECTORS) {
@@ -418,8 +420,10 @@ public class BehringerUBXa extends Synth {
                 addChooser(hbox, key, label, opts);
 
             }
+            selDialHbox.add(vbox);
         }
         {
+            JComponent vbox = new VBox();
             JComponent hbox = null;
 
             int j = 0;
@@ -444,8 +448,11 @@ public class BehringerUBXa extends Synth {
 
 
             }
+            selDialHbox.add(vbox);
         }
+        groupVbox.add(selDialHbox);
 
+        JComponent checkboxVbox = new VBox();
         {
             for (int i = 0; i < checkboxGroups.length; i += NUM_PARAMS_CHECKBOXES) {
                 String key = (String) checkboxGroups[i];
@@ -456,12 +463,13 @@ public class BehringerUBXa extends Synth {
                 Category cat = new Category(this, subCatTitle, Color.WHITE);
                 String[] labels = (String[]) checkboxGroups[i + 3];
                 addCheckboxGroup(hbox2, key, labels, null, false);
-                vbox.add(cat);
-                vbox.add(hbox2);
+                checkboxVbox.add(cat);
+                checkboxVbox.add(hbox2);
             }
         }
+        groupVbox.add(checkboxVbox);
 
-        return vbox;
+        return groupVbox;
 
     }
 
