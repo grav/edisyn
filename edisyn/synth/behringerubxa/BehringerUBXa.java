@@ -400,60 +400,65 @@ public class BehringerUBXa extends Synth {
 
     private JComponent makeGroupedControls(String ctrlGrp) {
         JComponent vbox = new VBox();
-        JComponent hbox = null;
+        {
+            JComponent hbox = null;
+            int j = 0;
+            for (int i = 0; i < selectors.length; i += NUM_PARAMS_SELECTORS) {
+                String key = (String) selectors[i];
+                if (key.indexOf(ctrlGrp) != 0) continue;
+                if (usedKeys.contains(key)) continue;
 
-        int j = 0;
-        for (int i = 0; i < dials.length; i += NUM_PARAMS_DIALS) {
+                if (j % 4 == 0) {
+                    hbox = new HBox();
+                    vbox.add(hbox);
+                }
+                j += 1;
+                String[] opts = (String[]) selectors[i + 2];
+                String label = spaceAtCapitalLetter(key.substring(ctrlGrp.length()));
+                addChooser(hbox, key, label, opts);
 
-            String key = (String) dials[i];
-            if (key.indexOf(ctrlGrp) != 0) continue;
-            if (usedKeys.contains(key)) continue;
-
-            if (j % 10 == 0) {
-                hbox = new HBox();
-                vbox.add(hbox);
             }
-            j += 1;
-            int minVal = (int) dials[i + 2];
-            int maxVal = (int) dials[i + 3];
-            boolean symmetric = (boolean) dials[i + 4];
+        }
+        {
+            JComponent hbox = null;
 
-            String label = key.substring(ctrlGrp.length());
+            int j = 0;
+            for (int i = 0; i < dials.length; i += NUM_PARAMS_DIALS) {
 
-            addDial(hbox, key, label, minVal, maxVal, symmetric);
+                String key = (String) dials[i];
+                if (key.indexOf(ctrlGrp) != 0) continue;
+                if (usedKeys.contains(key)) continue;
+
+                if (j % 10 == 0) {
+                    hbox = new HBox();
+                    vbox.add(hbox);
+                }
+                j += 1;
+                int minVal = (int) dials[i + 2];
+                int maxVal = (int) dials[i + 3];
+                boolean symmetric = (boolean) dials[i + 4];
+
+                String label = key.substring(ctrlGrp.length());
+
+                addDial(hbox, key, label, minVal, maxVal, symmetric);
 
 
+            }
         }
 
-        hbox = null;
-        j = 0;
-        for (int i = 0; i < selectors.length; i += NUM_PARAMS_SELECTORS) {
-            String key = (String) selectors[i];
-            if (key.indexOf(ctrlGrp) != 0) continue;
-            if (usedKeys.contains(key)) continue;
-
-            if (j % 4 == 0) {
-                hbox = new HBox();
-                vbox.add(hbox);
+        {
+            for (int i = 0; i < checkboxGroups.length; i += NUM_PARAMS_CHECKBOXES) {
+                String key = (String) checkboxGroups[i];
+                if (key.indexOf(ctrlGrp) != 0) continue;
+                if (usedKeys.contains(key)) continue;
+                JComponent hbox2 = new HBox();
+                String subCatTitle = spaceAtCapitalLetter(key.substring(ctrlGrp.length()));
+                Category cat = new Category(this, subCatTitle, Color.WHITE);
+                String[] labels = (String[]) checkboxGroups[i + 3];
+                addCheckboxGroup(hbox2, key, labels, null, false);
+                vbox.add(cat);
+                vbox.add(hbox2);
             }
-            j += 1;
-            String[] opts = (String[]) selectors[i + 2];
-            String label = spaceAtCapitalLetter(key.substring(ctrlGrp.length()));
-            addChooser(hbox, key, label, opts);
-
-        }
-
-        for (int i = 0; i < checkboxGroups.length; i += NUM_PARAMS_CHECKBOXES) {
-            String key = (String) checkboxGroups[i];
-            if (key.indexOf(ctrlGrp) != 0) continue;
-            if (usedKeys.contains(key)) continue;
-            JComponent hbox2 = new HBox();
-            String subCatTitle = spaceAtCapitalLetter(key.substring(ctrlGrp.length()));
-            Category cat = new Category(this, subCatTitle, Color.WHITE);
-            String[] labels = (String[]) checkboxGroups[i + 3];
-            addCheckboxGroup(hbox2, key, labels, null,false);
-            vbox.add(cat);
-            vbox.add(hbox2);
         }
 
         return vbox;
