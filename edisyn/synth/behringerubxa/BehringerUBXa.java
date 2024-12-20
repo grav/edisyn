@@ -303,7 +303,7 @@ public class BehringerUBXa extends Synth {
                 String tabTitle = String.join(" ", splitAtCapitalLetter(prefix, 10));
                 Category c = new Category(this, tabTitle, Style.COLOR_C());
                 vbox.add(c);
-                JComponent box = makeGroupedControls(prefix);
+                JComponent box = makeGroupedControls(prefix, ctrlGroup.selectorsPerRow(),ctrlGroup.avoidSelectorDialGrouping());
                 vbox.add(box);
             }
             String tabTitle = String.join("/",ctrlGroup.prefixes());
@@ -398,29 +398,30 @@ public class BehringerUBXa extends Synth {
 
     }
 
-    private JComponent makeGroupedControls(String ctrlGrp) {
+    private JComponent makeGroupedControls(String prefix, int selectorsPerRow,boolean avoidSelectorDialGrouping) {
         JComponent groupVbox = new VBox();
-        JComponent selDialHbox = new HBox();
+        JComponent selDialContainer = avoidSelectorDialGrouping ? new VBox() : new HBox();
         {
             JComponent vbox = new VBox();
             JComponent hbox = null;
             int j = 0;
+            int x = (selectors.length / NUM_PARAMS_SELECTORS);
             for (int i = 0; i < selectors.length; i += NUM_PARAMS_SELECTORS) {
                 String key = (String) selectors[i];
-                if (key.indexOf(ctrlGrp) != 0) continue;
+                if (key.indexOf(prefix) != 0) continue;
                 if (usedKeys.contains(key)) continue;
 
-                if (j % 4 == 0) {
+                if (j % selectorsPerRow == 0) {
                     hbox = new HBox();
                     vbox.add(hbox);
                 }
                 j += 1;
                 String[] opts = (String[]) selectors[i + 2];
-                String label = spaceAtCapitalLetter(key.substring(ctrlGrp.length()));
+                String label = spaceAtCapitalLetter(key.substring(prefix.length()));
                 addChooser(hbox, key, label, opts);
 
             }
-            selDialHbox.add(vbox);
+            selDialContainer.add(vbox);
         }
         {
             JComponent vbox = new VBox();
@@ -430,7 +431,7 @@ public class BehringerUBXa extends Synth {
             for (int i = 0; i < dials.length; i += NUM_PARAMS_DIALS) {
 
                 String key = (String) dials[i];
-                if (key.indexOf(ctrlGrp) != 0) continue;
+                if (key.indexOf(prefix) != 0) continue;
                 if (usedKeys.contains(key)) continue;
 
                 if (j % 10 == 0) {
@@ -442,24 +443,24 @@ public class BehringerUBXa extends Synth {
                 int maxVal = (int) dials[i + 3];
                 boolean symmetric = (boolean) dials[i + 4];
 
-                String label = key.substring(ctrlGrp.length());
+                String label = key.substring(prefix.length());
 
                 addDial(hbox, key, label, minVal, maxVal, symmetric);
 
 
             }
-            selDialHbox.add(vbox);
+            selDialContainer.add(vbox);
         }
-        groupVbox.add(selDialHbox);
+        groupVbox.add(selDialContainer);
 
         JComponent checkboxVbox = new VBox();
         {
             for (int i = 0; i < checkboxGroups.length; i += NUM_PARAMS_CHECKBOXES) {
                 String key = (String) checkboxGroups[i];
-                if (key.indexOf(ctrlGrp) != 0) continue;
+                if (key.indexOf(prefix) != 0) continue;
                 if (usedKeys.contains(key)) continue;
                 JComponent hbox2 = new HBox();
-                String subCatTitle = spaceAtCapitalLetter(key.substring(ctrlGrp.length()));
+                String subCatTitle = spaceAtCapitalLetter(key.substring(prefix.length()));
                 Category cat = new Category(this, subCatTitle, Color.WHITE);
                 String[] labels = (String[]) checkboxGroups[i + 3];
                 addCheckboxGroup(hbox2, key, labels, null, false);

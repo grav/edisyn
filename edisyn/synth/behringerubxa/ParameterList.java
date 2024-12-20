@@ -2,23 +2,21 @@ package edisyn.synth.behringerubxa;
 
 public class ParameterList {
 
-    record CtrlGroup(String[] prefixes, boolean avoidSelectorDialGrouping){
+    record CtrlGroup(String[] prefixes, int selectorsPerRow, boolean avoidSelectorDialGrouping){
         CtrlGroup(String[] prefixes){
-            this(prefixes, false);
+            this(prefixes, 4,false);
         }
+
     }
 
-
-
-
     static final CtrlGroup[] ctrlGroups = {
-            new CtrlGroup(new String []{"Control", "Performance","Envelopes"}),
-            new CtrlGroup(new String[]{"Oscillators","Filter"}),
-            new CtrlGroup(new String[]{"ModMatrix", "Amplifier", "Panning"}, true),
+            new CtrlGroup(new String []{"Control", "Performance","Envelopes"},1, false),
+            new CtrlGroup(new String[]{"Oscillators","Filter"},1,false),
+            new CtrlGroup(new String[]{"ModMatrix", "Amplifier", "Panning"}, 4,true),
             new CtrlGroup(new String[]{"Atrophy", "Sequencer"}),
-            new CtrlGroup(new String[]{"Midi", "Keyboard"}),
-            new CtrlGroup(new String[]{"Pedal", "Sysex"}, true),
-            new CtrlGroup(new String[]{"Voice", "Surface"}, true),
+            new CtrlGroup(new String[]{"Midi", "Keyboard"},2,false),
+            new CtrlGroup(new String[]{"Pedal", "Sysex"},6, true),
+            new CtrlGroup(new String[]{"Voice", "Surface"},4, true),
     };
 
 //    public static final Object[] ctrlGroups = {
@@ -254,15 +252,15 @@ public class ParameterList {
             "ArpeggiatorTime", 1027, new String[]{"1/4 notes", "1/8 notes", "1/16 notes", "1/32 notes", "1/4 triplets", "1/8 triplets", "1/16 triplets"},
             "ArpeggiatorSync", 1029, new String[]{"Global", "Retrigger"},
             "MidiSync", 1155, new String[]{"Internal", "USB", "DIN"},
+            "MidiMpeProfile", 1165, new String[]{"Disabled", "Single", "Zones"},
             "MidiChannelUpperRx", 1157, new String[]{"Channel 1", "Channel 2", "Channel 3", "Channel 4", "Channel 5", "Channel 6", "Channel 7", "Channel 8", "Channel 9", "Channel 10", "Channel 11", "Channel 12", "Channel 13", "Channel 14", "Channel 15", "Channel 16", "All", "None"},
             "MidiChannelLowerRx", 1158, new String[]{"Channel 1", "Channel 2", "Channel 3", "Channel 4", "Channel 5", "Channel 6", "Channel 7", "Channel 8", "Channel 9", "Channel 10", "Channel 11", "Channel 12", "Channel 13", "Channel 14", "Channel 15", "Channel 16", "All", "None"},
             "MidiChannelUpperTX", 1159, new String[]{"Channel 1", "Channel 2", "Channel 3", "Channel 4", "Channel 5", "Channel 6", "Channel 7", "Channel 8", "Channel 9", "Channel 10", "Channel 11", "Channel 12", "Channel 13", "Channel 14", "Channel 15", "Channel 16", "RxChannel"},
             "MidiChannelLowerTX", 1160, new String[]{"Channel 1", "Channel 2", "Channel 3", "Channel 4", "Channel 5", "Channel 6", "Channel 7", "Channel 8", "Channel 9", "Channel 10", "Channel 11", "Channel 12", "Channel 13", "Channel 14", "Channel 15", "Channel 16", "RxChannel"},
-            "MidiMpeProfile", 1165, new String[]{"Disabled", "Single", "Zones"},
             "KeyboardVelocityCurviness", 1281, new String[]{"Soft", "Medium", "Hard"},
             "KeyboardAftertouchAssignment", 1283, new String[]{"ChannelPressure", "PolyAftertouch"},
             "KeyboardAftertouchCurviness", 1284, new String[]{"Soft", "Medium", "Hard"},
-            "PedalSustainAssignment", 1408, new String[]{"Patch Up", "Patch Down", "Program Up", "Program Down", "Sustain", "Hold", "Sostenuto"},
+            "sSustainAssignment", 1408, new String[]{"Patch Up", "Patch Down", "Program Up", "Program Down", "Sustain", "Hold", "Sostenuto"},
             "PedalSustainPolarity", 1409, new String[]{"Negative", "Positive", "Disabled"},
             "PedalSustainInternalLatch", 1410, new String[]{"Unlatched", "Latched"},
             "PedalProgramAssignment", 1411, new String[]{"Patch Up", "Patch Down", "Program Up", "Program Down", "Sustain", "Hold", "Sostenuto"},
