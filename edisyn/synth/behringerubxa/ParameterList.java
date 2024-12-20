@@ -2,16 +2,34 @@ package edisyn.synth.behringerubxa;
 
 public class ParameterList {
 
+    record CtrlGroup(String[] prefixes, boolean avoidSelectorDialGrouping){
+        CtrlGroup(String[] prefixes){
+            this(prefixes, false);
+        }
+    }
 
-    public static final Object[] ctrlGroups = {
-            new String []{"Control", "Performance","Envelopes"},
-            new String[]{"Oscillators","Filter"},
-            new String[]{"ModMatrix", "Amplifier", "Panning"},
-            new String[]{"Atrophy", "Sequencer"},
-            new String[]{"Midi", "Keyboard"},
-            new String[]{"Pedal", "Sysex"},
-            new String[]{"Voice", "Surface"},
-            new String[]{"Program", "UI", "Background"}};
+
+
+
+    static final CtrlGroup[] ctrlGroups = {
+            new CtrlGroup(new String []{"Control", "Performance","Envelopes"}),
+            new CtrlGroup(new String[]{"Oscillators","Filter"}),
+            new CtrlGroup(new String[]{"ModMatrix", "Amplifier", "Panning"}, true),
+            new CtrlGroup(new String[]{"Atrophy", "Sequencer"}),
+            new CtrlGroup(new String[]{"Midi", "Keyboard"}),
+            new CtrlGroup(new String[]{"Pedal", "Sysex"}, true),
+            new CtrlGroup(new String[]{"Voice", "Surface"}, true),
+    };
+
+//    public static final Object[] ctrlGroups = {
+//            new String []{"Control", "Performance","Envelopes"},
+//            new String[]{"Oscillators","Filter"},
+//            new String[]{"ModMatrix", "Amplifier", "Panning"},
+//            new String[]{"Atrophy", "Sequencer"},
+//            new String[]{"Midi", "Keyboard"},
+//            new String[]{"Pedal", "Sysex"},
+//            new String[]{"Voice", "Surface"},
+//            new String[]{"Program", "UI", "Background"}};
 
     public static final int NUM_PARAMS_DIALS = 5;
     public static final Object[] dials = {
