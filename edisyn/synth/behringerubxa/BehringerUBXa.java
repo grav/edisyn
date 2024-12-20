@@ -295,18 +295,22 @@ public class BehringerUBXa extends Synth {
         }
         addTab("Main", main);
 
-        for (CtrlGroup ctrlGroup: ctrlGroups) {
+        for (CtrlGroup[] ctrlGroups : PANEL_GROUPS) {
             JComponent p = new SynthPanel(this);
             VBox vbox = new VBox();
             p.add(vbox, BorderLayout.CENTER);
-            for(String prefix: ctrlGroup.prefixes()) {
-                String tabTitle = String.join(" ", splitAtCapitalLetter(prefix, 10));
+            for(CtrlGroup ctrlGroup: ctrlGroups) {
+                String tabTitle = String.join(" ", splitAtCapitalLetter(ctrlGroup.prefix(), 10));
                 Category c = new Category(this, tabTitle, Style.COLOR_C());
                 vbox.add(c);
-                JComponent box = makeGroupedControls(prefix, ctrlGroup.selectorsPerRow(),ctrlGroup.avoidSelectorDialGrouping());
+                JComponent box = makeGroupedControls(
+                        ctrlGroup.prefix(),
+                        ctrlGroup.selectorsPerRow(),
+                        ctrlGroup.avoidSelectorDialGrouping());
                 vbox.add(box);
             }
-            String tabTitle = String.join("/",ctrlGroup.prefixes());
+            String []prefixes = Arrays.stream(ctrlGroups).map(CtrlGroup::prefix).toArray(String[]::new);
+            String tabTitle = String.join("/", prefixes);
             addTab(tabTitle, p);
         }
 

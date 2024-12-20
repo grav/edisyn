@@ -2,32 +2,47 @@ package edisyn.synth.behringerubxa;
 
 public class ParameterList {
 
-    record CtrlGroup(String[] prefixes, int selectorsPerRow, boolean avoidSelectorDialGrouping){
-        CtrlGroup(String[] prefixes){
-            this(prefixes, 4,false);
+    record CtrlGroup(String prefix,int selectorsPerRow, boolean avoidSelectorDialGrouping){
+        CtrlGroup(String prefix){
+            this(prefix, 1, false);
         }
-
+        CtrlGroup(String prefix, int selectorsPerRow){
+            this(prefix, selectorsPerRow, false);
+        }
     }
 
-    static final CtrlGroup[] ctrlGroups = {
-            new CtrlGroup(new String []{"Control", "Performance","Envelopes"},1, false),
-            new CtrlGroup(new String[]{"Oscillators","Filter"},1,false),
-            new CtrlGroup(new String[]{"ModMatrix", "Amplifier", "Panning"}, 4,true),
-            new CtrlGroup(new String[]{"Atrophy", "Sequencer"}),
-            new CtrlGroup(new String[]{"Midi", "Keyboard"},2,false),
-            new CtrlGroup(new String[]{"Pedal", "Sysex"},6, true),
-            new CtrlGroup(new String[]{"Voice", "Surface"},4, true),
+    static final CtrlGroup[][] PANEL_GROUPS = {
+            new CtrlGroup[]{
+                        new CtrlGroup("Control"),
+                        new CtrlGroup("Performance"),
+                        new CtrlGroup("Envelopes")
+                    },
+            new CtrlGroup[]{
+                    new CtrlGroup("Oscillators"),
+                    new CtrlGroup("Filter")
+            },
+            new CtrlGroup[]{
+                    new CtrlGroup("ModMatrix",4, true),
+                    new CtrlGroup("Amplifier"),
+                    new CtrlGroup("Panning")
+            },
+            new CtrlGroup[]{
+                    new CtrlGroup("Atrophy"),
+                    new CtrlGroup("Sequencer")
+            },
+            new CtrlGroup[]{
+                    new CtrlGroup("Midi",2),
+                    new CtrlGroup("Keyboard"),
+            },
+            new CtrlGroup[]{
+                    new CtrlGroup("Pedal",6,false),
+                    new CtrlGroup("Sysex"),
+            },
+            new CtrlGroup[]{
+                    new CtrlGroup("Voice"),
+                    new CtrlGroup("Surface")
+            }
     };
-
-//    public static final Object[] ctrlGroups = {
-//            new String []{"Control", "Performance","Envelopes"},
-//            new String[]{"Oscillators","Filter"},
-//            new String[]{"ModMatrix", "Amplifier", "Panning"},
-//            new String[]{"Atrophy", "Sequencer"},
-//            new String[]{"Midi", "Keyboard"},
-//            new String[]{"Pedal", "Sysex"},
-//            new String[]{"Voice", "Surface"},
-//            new String[]{"Program", "UI", "Background"}};
 
     public static final int NUM_PARAMS_DIALS = 5;
     public static final Object[] dials = {
