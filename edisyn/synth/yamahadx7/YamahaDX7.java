@@ -119,6 +119,12 @@ public class YamahaDX7 extends Synth implements ProvidesNN
     JCheckBox volcaCheck;
     public static final String VOLCA_KEY = "Volca";
 
+    // Mute/Solo state for the 6 operators (index 0 = operator 1)
+    // savedOutputLevels[i] holds the pre-mute output level, or -1 if not muted
+    int[] savedOutputLevels = new int[] { -1, -1, -1, -1, -1, -1 };
+    JButton[] muteButtons = new JButton[6];
+    JButton[] soloButtons = new JButton[6];
+
     public boolean isVolca() 
         { 
         return volca; 
@@ -694,8 +700,40 @@ public class YamahaDX7 extends Synth implements ProvidesNN
         comp = new LabelledDial("Output", this, "operator" + envelope + "operatoroutputlevel", color, 0, 99);
         ((LabelledDial)comp).addAdditionalLabel("Level");
         hbox.add(comp);
-        
-        hbox.add(Strut.makeHorizontalStrut(30));
+
+        // Mute/Solo buttons
+        VBox mutesolobox = new VBox();
+        final int op = envelope;  // 1-based operator number
+
+        JButton muteBtn = new JButton("Mute");
+        muteBtn.putClientProperty("JComponent.sizeVariant", "small");
+        muteBtn.setFont(Style.SMALL_FONT());
+        muteBtn.addActionListener(new ActionListener()
+            {
+            public void actionPerformed(ActionEvent e)
+                {
+                toggleMute(op);
+                }
+            });
+        muteButtons[op - 1] = muteBtn;
+        mutesolobox.add(muteBtn);
+
+        JButton soloBtn = new JButton("Solo");
+        soloBtn.putClientProperty("JComponent.sizeVariant", "small");
+        soloBtn.setFont(Style.SMALL_FONT());
+        soloBtn.addActionListener(new ActionListener()
+            {
+            public void actionPerformed(ActionEvent e)
+                {
+                toggleSolo(op);
+                }
+            });
+        soloButtons[op - 1] = soloBtn;
+        mutesolobox.add(soloBtn);
+
+        hbox.add(mutesolobox);
+
+        hbox.add(Strut.makeHorizontalStrut(10));
     
         comp = new LabelledDial("Rate 1", this, "operator" + envelope + "rate1", color, 0, 99);
         ((LabelledDial)comp).addAdditionalLabel("(Attack)");
@@ -746,6 +784,120 @@ public class YamahaDX7 extends Synth implements ProvidesNN
         return category;
         }
         
+
+    /** Returns the output-level parameter key for the given operator (1-based). */
+    String outputLevelKey(int op)
+        {
+        return "operator" + op + "operatoroutputlevel";
+        }
+
+    /** Update button labels/colours to reflect current mute/solo state. */
+    void updateMuteSoloButtons()
+        {
+        for (int i = 0; i < 6; i++)
+            {
+            if (muteButtons[i] == null) continue;
+            boolean muted = savedOutputLevels[i] >= 0;
+            muteButtons[i].setText(muted ? "[Muted]" : "Mute");
+            muteButtons[i].setForeground(muted ? Color.RED : null);
+            }
+        // Determine whether any operator is soloed: all others are muted
+        // (We consider an op "soloed" if exactly one op is not muted and the rest are)
+        int numMuted = 0;
+        for (int i = 0; i < 6; i++)
+            if (savedOutputLevels[i] >= 0) numMuted++;
+        boolean anysoloed = (numMuted == 5);
+        for (int i = 0; i < 6; i++)
+            {
+            if (soloButtons[i] == null) continue;
+            boolean thisSoloed = anysoloed && (savedOutputLevels[i] < 0);
+            soloButtons[i].setText(thisSoloed ? "[Solo]" : "Solo");
+            soloButtons[i].setForeground(thisSoloed ? Color.ORANGE : null);
+            }
+        }
+
+    /** Set a single operator's output level and send the parameter change to the synth.
+        op is 1-based. Does NOT modify the model's saved value. */
+    void sendOutputLevel(int op, int level)
+        {
+        String key = outputLevelKey(op);
+        model.set(key, level);
+        tryToSendMIDI(emitAll(key));
+        }
+
+    /** Mute the given operator (1-based): save its current output level and set it to 0.
+        If already muted, unmute it (restore saved level). */
+    void toggleMute(int op)
+        {
+        int idx = op - 1;
+        if (savedOutputLevels[idx] >= 0)
+            {
+            // Currently muted — restore
+            sendOutputLevel(op, savedOutputLevels[idx]);
+            savedOutputLevels[idx] = -1;
+            }
+        else
+            {
+            // Not muted — save and zero out
+            savedOutputLevels[idx] = model.get(outputLevelKey(op));
+            sendOutputLevel(op, 0);
+            }
+        updateMuteSoloButtons();
+        }
+
+    /** Solo the given operator (1-based): mute all others, or unmute all if this op is already soloed. */
+    void toggleSolo(int op)
+        {
+        int idx = op - 1;
+        // Determine if this operator is currently the soloed one
+        int numMuted = 0;
+        for (int i = 0; i < 6; i++)
+            if (savedOutputLevels[i] >= 0) numMuted++;
+        boolean thisSoloed = (numMuted == 5) && (savedOutputLevels[idx] < 0);
+
+        if (thisSoloed)
+            {
+            // Already soloed — unmute all operators
+            for (int i = 0; i < 6; i++)
+                {
+                if (savedOutputLevels[i] >= 0)
+                    {
+                    sendOutputLevel(i + 1, savedOutputLevels[i]);
+                    savedOutputLevels[i] = -1;
+                    }
+                }
+            }
+        else
+            {
+            // Solo this operator: mute all others
+            // First restore any currently-muted operators' levels (their save slot gets reused)
+            // then save & mute all except the target
+            for (int i = 0; i < 6; i++)
+                {
+                if (i == idx)
+                    {
+                    // This is the operator to solo — if it was muted, restore it
+                    if (savedOutputLevels[i] >= 0)
+                        {
+                        sendOutputLevel(i + 1, savedOutputLevels[i]);
+                        savedOutputLevels[i] = -1;
+                        }
+                    }
+                else
+                    {
+                    // Mute this operator
+                    if (savedOutputLevels[i] < 0)
+                        {
+                        // Not currently muted — save and zero
+                        savedOutputLevels[i] = model.get(outputLevelKey(i + 1));
+                        sendOutputLevel(i + 1, 0);
+                        }
+                    // If already muted, leave the saved level intact
+                    }
+                }
+            }
+        updateMuteSoloButtons();
+        }
 
 
     /** Map of parameter -> index in the allParameters array. */
