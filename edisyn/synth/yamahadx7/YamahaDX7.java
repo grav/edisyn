@@ -122,8 +122,18 @@ public class YamahaDX7 extends Synth implements ProvidesNN
     // Mute/Solo state for the 6 operators (index 0 = operator 1)
     // savedOutputLevels[i] holds the pre-mute output level, or -1 if not muted
     int[] savedOutputLevels = new int[] { -1, -1, -1, -1, -1, -1 };
-    JButton[] muteButtons = new JButton[6];
-    JButton[] soloButtons = new JButton[6];
+    // Lists so that buttons on multiple tabs (per-op tabs + all-ops tab) all update together
+    @SuppressWarnings("unchecked")
+    java.util.List<JButton>[] muteButtons = new java.util.List[6];
+    @SuppressWarnings("unchecked")
+    java.util.List<JButton>[] soloButtons = new java.util.List[6];
+    {
+    for (int i = 0; i < 6; i++)
+        {
+        muteButtons[i] = new java.util.ArrayList<JButton>();
+        soloButtons[i] = new java.util.ArrayList<JButton>();
+        }
+    }
 
     public boolean isVolca() 
         { 
@@ -232,6 +242,21 @@ public class YamahaDX7 extends Synth implements ProvidesNN
 
         sourcePanel.add(vbox, BorderLayout.CENTER);
         addTab("Operators 5-6", sourcePanel);
+
+        sourcePanel = new SynthPanel(this);
+        vbox = new VBox();
+
+        for (int op = 1; op <= 6; op++)
+            {
+            hbox = new HBox();
+            hbox.add(addOperator(op, Style.COLOR_A()));
+            hbox.addLast(addKeyScaling(op, Style.COLOR_A()));
+            vbox.add(hbox);
+            vbox.add(addEnvelope(op, Style.COLOR_B()));
+            }
+
+        sourcePanel.add(vbox, BorderLayout.CENTER);
+        addTab("All Operators", sourcePanel);
 
         model.set("name", "INIT VOICE");
         
@@ -715,7 +740,7 @@ public class YamahaDX7 extends Synth implements ProvidesNN
                 toggleMute(op);
                 }
             });
-        muteButtons[op - 1] = muteBtn;
+        muteButtons[op - 1].add(muteBtn);
         mutesolobox.add(muteBtn);
 
         JButton soloBtn = new JButton("Solo");
@@ -728,7 +753,7 @@ public class YamahaDX7 extends Synth implements ProvidesNN
                 toggleSolo(op);
                 }
             });
-        soloButtons[op - 1] = soloBtn;
+        soloButtons[op - 1].add(soloBtn);
         mutesolobox.add(soloBtn);
 
         hbox.add(mutesolobox);
@@ -794,25 +819,25 @@ public class YamahaDX7 extends Synth implements ProvidesNN
     /** Update button labels/colours to reflect current mute/solo state. */
     void updateMuteSoloButtons()
         {
-        for (int i = 0; i < 6; i++)
-            {
-            if (muteButtons[i] == null) continue;
-            boolean muted = savedOutputLevels[i] >= 0;
-            muteButtons[i].setText(muted ? "[Muted]" : "Mute");
-            muteButtons[i].setForeground(muted ? Color.RED : null);
-            }
-        // Determine whether any operator is soloed: all others are muted
-        // (We consider an op "soloed" if exactly one op is not muted and the rest are)
         int numMuted = 0;
         for (int i = 0; i < 6; i++)
             if (savedOutputLevels[i] >= 0) numMuted++;
         boolean anysoloed = (numMuted == 5);
+
         for (int i = 0; i < 6; i++)
             {
-            if (soloButtons[i] == null) continue;
-            boolean thisSoloed = anysoloed && (savedOutputLevels[i] < 0);
-            soloButtons[i].setText(thisSoloed ? "[Solo]" : "Solo");
-            soloButtons[i].setForeground(thisSoloed ? Color.ORANGE : null);
+            boolean muted = savedOutputLevels[i] >= 0;
+            boolean thisSoloed = anysoloed && !muted;
+            for (JButton btn : muteButtons[i])
+                {
+                btn.setText(muted ? "[Muted]" : "Mute");
+                btn.setForeground(muted ? Color.RED : null);
+                }
+            for (JButton btn : soloButtons[i])
+                {
+                btn.setText(thisSoloed ? "[Solo]" : "Solo");
+                btn.setForeground(thisSoloed ? Color.ORANGE : null);
+                }
             }
         }
 
