@@ -244,6 +244,15 @@ public class YamahaDX7 extends Synth implements ProvidesNN
         addTab("Operators 5-6", sourcePanel);
 
         sourcePanel = new SynthPanel(this);
+        VBox allOpsVBox = new VBox();
+
+        hbox = new HBox();
+        hbox.add(addNameGlobal(Style.COLOR_GLOBAL()));
+        hbox.addLast(addGlobal(Style.COLOR_A()));
+        allOpsVBox.add(hbox);
+        allOpsVBox.add(addLFO(Style.COLOR_B()));
+        allOpsVBox.add(addPitchEnvelope(Style.COLOR_C()));
+
         HBox allOpsHBox = new HBox();
 
         VBox leftCol = new VBox();
@@ -268,7 +277,8 @@ public class YamahaDX7 extends Synth implements ProvidesNN
 
         allOpsHBox.add(leftCol);
         allOpsHBox.addLast(rightCol);
-        sourcePanel.add(allOpsHBox, BorderLayout.CENTER);
+        allOpsVBox.add(allOpsHBox);
+        sourcePanel.add(allOpsVBox, BorderLayout.CENTER);
         addTab("All Operators", sourcePanel);
 
         model.set("name", "INIT VOICE");
