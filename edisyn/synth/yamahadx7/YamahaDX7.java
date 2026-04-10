@@ -173,10 +173,49 @@ public class YamahaDX7 extends Synth implements ProvidesNN
             }
 
         /// SOUND PANEL
-                
+
+        JComponent sourcePanel = new SynthPanel(this);
+        VBox allOpsVBox = new VBox();
+
+        HBox hbox = new HBox();
+        hbox.add(addNameGlobal(Style.COLOR_GLOBAL()));
+        hbox.addLast(addGlobal(Style.COLOR_A()));
+        allOpsVBox.add(hbox);
+        allOpsVBox.add(addLFO(Style.COLOR_B()));
+        allOpsVBox.add(addPitchEnvelope(Style.COLOR_C()));
+
+        HBox allOpsHBox = new HBox();
+
+        VBox leftCol = new VBox();
+        for (int op = 1; op <= 3; op++)
+            {
+            hbox = new HBox();
+            hbox.add(addOperator(op, Style.COLOR_A()));
+            hbox.addLast(addKeyScaling(op, Style.COLOR_A()));
+            leftCol.add(hbox);
+            leftCol.add(addEnvelope(op, Style.COLOR_B()));
+            }
+
+        VBox rightCol = new VBox();
+        for (int op = 4; op <= 6; op++)
+            {
+            hbox = new HBox();
+            hbox.add(addOperator(op, Style.COLOR_A()));
+            hbox.addLast(addKeyScaling(op, Style.COLOR_A()));
+            rightCol.add(hbox);
+            rightCol.add(addEnvelope(op, Style.COLOR_B()));
+            }
+
+        allOpsHBox.add(leftCol);
+        allOpsHBox.addLast(rightCol);
+        allOpsVBox.add(allOpsHBox);
+        sourcePanel.add(allOpsVBox, BorderLayout.CENTER);
+        addTab("All", sourcePanel);
+
+
         JComponent soundPanel = new SynthPanel(this);
         VBox vbox = new VBox();
-        HBox hbox = new HBox();
+        hbox = new HBox();
         hbox.add(addNameGlobal(Style.COLOR_GLOBAL()));
         hbox.addLast(addGlobal(Style.COLOR_A()));
         vbox.add(hbox);
@@ -189,7 +228,7 @@ public class YamahaDX7 extends Synth implements ProvidesNN
         addTab("Global", soundPanel);
                 
 
-        JComponent sourcePanel = new SynthPanel(this);
+        sourcePanel = new SynthPanel(this);
         vbox = new VBox();
         
         hbox = new HBox();
@@ -242,44 +281,6 @@ public class YamahaDX7 extends Synth implements ProvidesNN
 
         sourcePanel.add(vbox, BorderLayout.CENTER);
         addTab("Operators 5-6", sourcePanel);
-
-        sourcePanel = new SynthPanel(this);
-        VBox allOpsVBox = new VBox();
-
-        hbox = new HBox();
-        hbox.add(addNameGlobal(Style.COLOR_GLOBAL()));
-        hbox.addLast(addGlobal(Style.COLOR_A()));
-        allOpsVBox.add(hbox);
-        allOpsVBox.add(addLFO(Style.COLOR_B()));
-        allOpsVBox.add(addPitchEnvelope(Style.COLOR_C()));
-
-        HBox allOpsHBox = new HBox();
-
-        VBox leftCol = new VBox();
-        for (int op = 1; op <= 3; op++)
-            {
-            hbox = new HBox();
-            hbox.add(addOperator(op, Style.COLOR_A()));
-            hbox.addLast(addKeyScaling(op, Style.COLOR_A()));
-            leftCol.add(hbox);
-            leftCol.add(addEnvelope(op, Style.COLOR_B()));
-            }
-
-        VBox rightCol = new VBox();
-        for (int op = 4; op <= 6; op++)
-            {
-            hbox = new HBox();
-            hbox.add(addOperator(op, Style.COLOR_A()));
-            hbox.addLast(addKeyScaling(op, Style.COLOR_A()));
-            rightCol.add(hbox);
-            rightCol.add(addEnvelope(op, Style.COLOR_B()));
-            }
-
-        allOpsHBox.add(leftCol);
-        allOpsHBox.addLast(rightCol);
-        allOpsVBox.add(allOpsHBox);
-        sourcePanel.add(allOpsVBox, BorderLayout.CENTER);
-        addTab("All Operators", sourcePanel);
 
         model.set("name", "INIT VOICE");
         
